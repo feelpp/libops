@@ -66,7 +66,7 @@ namespace Ops
    */
   void Error::CoutWhat()
   {
-    cout << this->What() << endl;
+    std::cout << this->What() << std::endl;
   }
 
 

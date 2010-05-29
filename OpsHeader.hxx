@@ -36,10 +36,13 @@ extern "C"
 #define OPS_WITH_ABORT
 #endif
 
-#define DISP(x) cout << #x ": " << x << endl
+#define DISP(x) std::cout << #x ": " << x << std::endl
 
+#include <iostream>
 #include <vector>
 #include <algorithm>
+
+using std::string;
 
 #include "Error.hxx"
 #include "ClassOps.hxx"
