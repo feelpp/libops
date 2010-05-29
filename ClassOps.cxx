@@ -188,7 +188,13 @@ namespace Ops
   */
   void Ops::PutOnStack(string name)
   {
-    vector<string> tree = Split(name, ".");
+    if (name.empty())
+      {
+        lua_pushvalue(state_, LUA_GLOBALSINDEX);
+        return;
+      }
+
+    std::vector<string> tree = Split(name, ".");
 
     lua_getglobal(state_, tree[0].c_str());
     if (tree.size() == 1)
@@ -464,8 +470,8 @@ namespace Ops
   */
   template<class T>
   void Ops::GetValue(string name, string constraint,
-                     const vector<T>& default_value, bool with_default,
-                     vector<T>& value)
+                     const std::vector<T>& default_value, bool with_default,
+                     std::vector<T>& value)
   {
     PutOnStack(Name(name));
 
@@ -484,9 +490,9 @@ namespace Ops
       throw Error("GetValue",
                   "The " + Entry(name) + " is not a table.");
 
-    vector<T> element_list;
+    std::vector<T> element_list;
     T element;
-    vector<string> key_list;
+    std::vector<string> key_list;
     string key;
     // Now loops over all elements of the table.
     lua_pushnil(state_);
@@ -566,7 +572,8 @@ namespace Ops
     \param[out] vect (output) vector containing the elements of the string.
     \param[in] delimiters (optional) delimiters. Default: " \n\t".
   */
-  void Ops::Split(string str, vector<string>& vect, string delimiters) const
+  void Ops::Split(string str, std::vector<string>& vect, string delimiters)
+    const
   {
     vect.clear();
 
@@ -593,9 +600,9 @@ namespace Ops
     \param[in] delimiters (optional) delimiters. Default: " \n\t".
     \return A vector containing elements of the string.
   */
-  vector<string> Ops::Split(string str, string delimiters)
+  std::vector<string> Ops::Split(string str, string delimiters)
   {
-    vector<string> vect;
+    std::vector<string> vect;
     Split(str, vect, delimiters);
     return vect;
   }
