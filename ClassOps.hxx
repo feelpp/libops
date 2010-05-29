@@ -62,6 +62,9 @@ namespace Ops
 
   protected:
     void GetValue(string name, string constraint,
+                  const bool& default_value, bool with_default,
+                  bool& value);
+    void GetValue(string name, string constraint,
                   const int& default_value, bool with_default,
                   int& value);
     void GetValue(string name, string constraint,

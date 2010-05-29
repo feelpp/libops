@@ -290,6 +290,48 @@ namespace Ops
     \note The default value may not satisfy the constraint.
   */
   void Ops::GetValue(string name, string constraint,
+                     const bool& default_value, bool with_default,
+                     bool& value)
+  {
+    PutOnStack(Name(name));
+
+    if (lua_isnil(state_, -1))
+      if (with_default)
+        {
+          value = default_value;
+          ClearStack();
+          return;
+        }
+      else
+        throw Error("GetValue(bool&)",
+                    "The " + Entry(name) + " was not found.");
+
+    if (!lua_isboolean(state_, -1))
+      throw Error("GetValue(bool&)",
+                  "The " + Entry(name) + " is not a Boolean.");
+
+    value = static_cast<bool>(lua_toboolean(state_, -1));
+
+    if (!CheckConstraint(name, constraint))
+      throw Error("GetValue(int&)",
+                  "The " + Entry(name) + " does not satisfy "
+                  + "the constraint:\n" + Constraint(constraint));
+
+    ClearStack();
+  }
+
+
+  //! Retrieves a value and checks if it satisfies given constraints.
+  /*! If the entry is not found, the default value is returned (if any).
+    \param[in] name name of the entry.
+    \param[in] constraint constraint to be satisfied.
+    \param[in] default_value default value.
+    \param[in] with_default is there a default value? If not, \a default_value
+    is ignored.
+    \param[out] value the value of the entry named \a name.
+    \note The default value may not satisfy the constraint.
+  */
+  void Ops::GetValue(string name, string constraint,
                      const int& default_value, bool with_default,
                      int& value)
   {
