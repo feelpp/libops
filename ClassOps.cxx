@@ -149,6 +149,52 @@ namespace Ops
   }
 
 
+  //! Retrieves a value from the configuration file.
+  /*!
+    \param[in] name name of the entry.
+    \param[in] constraint constraint that the entry value must satisfy.
+    \param[in] default_value default value for the entry in case it is not
+    found in the configuration file.
+    \return The value of the entry.
+  */
+  template<class T>
+  T Ops::Get(string name, string constraint, const T& default_value)
+  {
+    T value;
+    SetValue(name, constraint, default_value, true, value);
+    return value;
+  }
+
+
+  //! Retrieves a value from the configuration file.
+  /*!
+    \param[in] name name of the entry.
+    \param[in] constraint constraint that the entry value must satisfy.
+    \return The value of the entry.
+  */
+  template<class T>
+  T Ops::Get(string name, string constraint)
+  {
+    T value;
+    SetValue(name, constraint, value, false, value);
+    return value;
+  }
+
+
+  //! Retrieves a value from the configuration file.
+  /*!
+    \param[in] name name of the entry.
+    \return The value of the entry.
+  */
+  template <class T>
+  T Ops::Get(string name)
+  {
+    T value;
+    SetValue(name, "", value, false, value);
+    return value;
+  }
+
+
   //! Returns the list of entries inside an entry.
   /*!
     \param[in] name name of the entry to search in.
