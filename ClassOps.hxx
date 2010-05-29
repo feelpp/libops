@@ -48,6 +48,7 @@ namespace Ops
     void Get(string name, string constraint, T& value);
     template<class T>
     void Get(string name, T& value);
+    std::vector<string> GetEntryList(string name = "");
     bool CheckConstraint(string name, string constraint);
     void PutOnStack(string name);
     void ClearStack();

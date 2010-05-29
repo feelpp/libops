@@ -149,6 +149,54 @@ namespace Ops
   }
 
 
+  //! Returns the list of entries inside an entry.
+  /*!
+    \param[in] name name of the entry to search in.
+    \return The list of entries under \a name, sorted in alphabetical order
+    (with numbers coming first).
+    \note The prefix is prepended to \a name before the search. If the entry
+    \a name does not exist or does not contain other entries, an exception is
+    raised.
+  */
+  std::vector<string> Ops::GetEntryList(string name)
+  {
+    PutOnStack(Name(name));
+
+    if (lua_isnil(state_, -1))
+      throw Error("GetEntryList",
+                  "The " + Entry(name) + " was not found.");
+
+    if (!lua_istable(state_, -1))
+      throw Error("GetEntryList",
+                  "The " + Entry(name) + " does not contain other entries.");
+
+    std::vector<string> key_list;
+    string key;
+    // Now loops over all elements of the table.
+    lua_pushnil(state_);
+    while (lua_next(state_, -2) != 0)
+      {
+        // Duplicates the key so that 'lua_tostring' (applied to it) should
+        // not interfere with 'lua_next'.
+        lua_pushvalue(state_, -2);
+
+        if (!Convert(-1, key))
+          throw Error("GetEntryList",
+                      "Unable to read the keys of " + Entry(name) + ".");
+        key_list.push_back(key);
+
+        lua_pop(state_, 2);
+      }
+
+    // Sorts the.
+    std::sort(key_list.begin(), key_list.end());
+
+    ClearStack();
+
+    return key_list;
+  }
+
+
   //! Checks that a certain entry satisfies a constraint.
   /*!
     \param[in] name the name of the entry whose consistency with \a constraint

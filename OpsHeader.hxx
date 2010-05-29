@@ -39,6 +39,7 @@ extern "C"
 #define DISP(x) cout << #x ": " << x << endl
 
 #include <vector>
+#include <algorithm>
 
 #include "Error.hxx"
 #include "ClassOps.hxx"
