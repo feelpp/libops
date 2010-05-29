@@ -108,6 +108,14 @@ namespace Ops
   }
 
 
+  //! Retrieves a value from the configuration file.
+  /*!
+    \param[in] name name of the entry.
+    \param[in] constraint constraint that the entry value must satisfy.
+    \param[in] default_value default value for the entry in case it is not
+    found in the configuration file.
+    \param[out] value value of the entry.
+  */
   template<class TD, class T>
   void
   Ops::Get(string name, string constraint, const TD& default_value, T& value)
@@ -116,6 +124,12 @@ namespace Ops
   }
 
 
+  //! Retrieves a value from the configuration file.
+  /*!
+    \param[in] name name of the entry.
+    \param[in] constraint constraint that the entry value must satisfy.
+    \param[out] value value of the entry.
+  */
   template<class T>
   void Ops::Get(string name, string constraint, T& value)
   {
@@ -123,6 +137,11 @@ namespace Ops
   }
 
 
+  //! Retrieves a value from the configuration file.
+  /*!
+    \param[in] name name of the entry.
+    \param[out] value value of the entry.
+  */
   template <class T>
   void Ops::Get(string name, T& value)
   {
