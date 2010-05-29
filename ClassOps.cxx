@@ -452,6 +452,75 @@ namespace Ops
   }
 
 
+  //! Retrieves a value and checks if it satisfies given constraints.
+  /*! If the entry is not found, the default value is returned (if any).
+    \param[in] name name of the entry.
+    \param[in] constraint constraint to be satisfied.
+    \param[in] default_value default value.
+    \param[in] with_default is there a default value? If not, \a default_value
+    is ignored.
+    \param[out] value the value of the entry named \a name.
+    \note The default value may not satisfy the constraint.
+  */
+  template<class T>
+  void Ops::GetValue(string name, string constraint,
+                     const vector<T>& default_value, bool with_default,
+                     vector<T>& value)
+  {
+    PutOnStack(Name(name));
+
+    if (lua_isnil(state_, -1))
+      if (with_default)
+        {
+          value = default_value;
+          ClearStack();
+          return;
+        }
+      else
+        throw Error("GetValue",
+                    "The " + Entry(name) + " was not found.");
+
+    if (!lua_istable(state_, -1))
+      throw Error("GetValue",
+                  "The " + Entry(name) + " is not a table.");
+
+    vector<T> element_list;
+    T element;
+    vector<string> key_list;
+    string key;
+    // Now loops over all elements of the table.
+    lua_pushnil(state_);
+    while (lua_next(state_, -2) != 0)
+      {
+        // Duplicates the key and value so that 'lua_tostring' (applied to
+        // them) should not interfere with 'lua_next'.
+        lua_pushvalue(state_, -2);
+        lua_pushvalue(state_, -2);
+
+        if (!Convert(-2, key))
+          throw Error("GetValue",
+                      "Unable to read the keys of " + Entry(name) + ".");
+        key_list.push_back(key);
+
+        Convert(-1, element, name + "[" + key + "]");
+        element_list.push_back(element);
+
+        lua_pop(state_, 3);
+      }
+
+    for (int i = 0; i < int(key_list.size()); i++)
+      if (!CheckConstraint(name + "[" + key_list[i] + "]", constraint))
+        throw Error("GetValue",
+                    "The " + Entry(name + "[" + key_list[i] + "]")
+                    + " does not satisfy the constraint:\n"
+                    + Constraint(constraint));
+
+    value = element_list;
+
+    ClearStack();
+  }
+
+
   //! Prepends the prefix to an entry name.
   /*!
     \param[in] name name of the entry.

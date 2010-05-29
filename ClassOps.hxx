@@ -69,6 +69,10 @@ namespace Ops
     template<class TD, class T>
     void GetValue(string name, string constraint,
                   const TD& default_value, bool with_default, T& value);
+    template<class T>
+    void GetValue(string name, string constraint,
+                  const vector<T>& default_value, bool with_default,
+                  vector<T>& value);
     string Constraint(string constraint) const;
     string Name(const string& name) const;
     string Entry(const string& name) const;
