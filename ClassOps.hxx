@@ -62,7 +62,9 @@ namespace Ops
     // Access methods.
     string GetFilePath() const;
     lua_State* GetState();
+#ifndef SWIG
     const lua_State* GetState() const;
+#endif
     string GetPrefix() const;
     void SetPrefix(string prefix);
     void ClearPrefix();
