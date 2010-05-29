@@ -1,6 +1,6 @@
 // Copyright (C) 2010, Vivien Mallet
 //
-// This file is part Ops, a library for parsing Lua configuration files.
+// This file is part of Ops, a library for parsing Lua configuration files.
 //
 // Ops is free software; you can redistribute it and/or modify it under the
 // terms of the GNU Lesser General Public License as published by the Free
