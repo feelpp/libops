@@ -61,21 +61,14 @@ namespace Ops
     void ClearPrefix();
 
   protected:
+    bool Convert(int index, bool& output, string name = "");
+    bool Convert(int index, int& output, string name = "");
+    bool Convert(int index, float& output, string name = "");
+    bool Convert(int index, double& output, string name = "");
+    bool Convert(int index, string& output, string name = "");
+    template<class TD, class T>
     void GetValue(string name, string constraint,
-                  const bool& default_value, bool with_default,
-                  bool& value);
-    void GetValue(string name, string constraint,
-                  const int& default_value, bool with_default,
-                  int& value);
-    void GetValue(string name, string constraint,
-                  const float& default_value, bool with_default,
-                  float& value);
-    void GetValue(string name, string constraint,
-                  const double& default_value, bool with_default,
-                  double& value);
-    void GetValue(string name, string constraint,
-                  const string& default_value, bool with_default,
-                  string& value);
+                  const TD& default_value, bool with_default, T& value);
     string Constraint(string constraint) const;
     string Name(const string& name) const;
     string Entry(const string& name) const;

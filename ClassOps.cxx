@@ -279,90 +279,137 @@ namespace Ops
   ///////////////////////
 
 
-  //! Retrieves a value and checks if it satisfies given constraints.
-  /*! If the entry is not found, the default value is returned (if any).
+  //! Converts an element of the stack to a Boolean.
+  /*!
+    \param[in] index index in the stack.
+    \param[out] output converted value.
     \param[in] name name of the entry.
-    \param[in] constraint constraint to be satisfied.
-    \param[in] default_value default value.
-    \param[in] with_default is there a default value? If not, \a default_value
-    is ignored.
-    \param[out] value the value of the entry named \a name.
-    \note The default value may not satisfy the constraint.
+    \return True if the conversion was successful, false otherwise.
+    \note If \a name is not empty and if the conversion fails, an exception is
+    raised by this method. This exception gives the name of the entry and
+    states that it could not be converted. If \a name is empty, no exception
+    is raised.
   */
-  void Ops::GetValue(string name, string constraint,
-                     const bool& default_value, bool with_default,
-                     bool& value)
+  bool Ops::Convert(int index, bool& output, string name)
   {
-    PutOnStack(Name(name));
-
-    if (lua_isnil(state_, -1))
-      if (with_default)
-        {
-          value = default_value;
-          ClearStack();
-          return;
-        }
+    if (!lua_isboolean(state_, index))
+      if (name.empty())
+        return false;
       else
-        throw Error("GetValue(bool&)",
-                    "The " + Entry(name) + " was not found.");
+        throw Error("Convert(bool&)",
+                    "The " + Entry(name) + " is not a Boolean.");
 
-    if (!lua_isboolean(state_, -1))
-      throw Error("GetValue(bool&)",
-                  "The " + Entry(name) + " is not a Boolean.");
-
-    value = static_cast<bool>(lua_toboolean(state_, -1));
-
-    if (!CheckConstraint(name, constraint))
-      throw Error("GetValue(int&)",
-                  "The " + Entry(name) + " does not satisfy "
-                  + "the constraint:\n" + Constraint(constraint));
-
-    ClearStack();
+    output = static_cast<bool>(lua_toboolean(state_, index));
+    return true;
   }
 
 
-  //! Retrieves a value and checks if it satisfies given constraints.
-  /*! If the entry is not found, the default value is returned (if any).
+  //! Converts an element of the stack to an integer.
+  /*!
+    \param[in] index index in the stack.
+    \param[out] output converted value.
     \param[in] name name of the entry.
-    \param[in] constraint constraint to be satisfied.
-    \param[in] default_value default value.
-    \param[in] with_default is there a default value? If not, \a default_value
-    is ignored.
-    \param[out] value the value of the entry named \a name.
-    \note The default value may not satisfy the constraint.
+    \return True if the conversion was successful, false otherwise.
+    \note If \a name is not empty and if the conversion fails, an exception is
+    raised by this method. This exception gives the name of the entry and
+    states that it could not be converted. If \a name is empty, no exception
+    is raised.
   */
-  void Ops::GetValue(string name, string constraint,
-                     const int& default_value, bool with_default,
-                     int& value)
+  bool Ops::Convert(int index, int& output, string name)
   {
-    PutOnStack(Name(name));
-
-    if (lua_isnil(state_, -1))
-      if (with_default)
-        {
-          value = default_value;
-          ClearStack();
-          return;
-        }
+    if (!lua_isnumber(state_, index))
+      if (name.empty())
+        return false;
       else
-        throw Error("GetValue(int&)",
-                    "The " + Entry(name) + " was not found.");
+        throw Error("Convert(int&)",
+                    "The " + Entry(name) + " is not an integer.");
 
-    if (!lua_isnumber(state_, -1))
-      throw Error("GetValue(int&)",
-                  "The " + Entry(name) + " is not an integer.");
-    double number = static_cast<double>(lua_tonumber(state_, -1));
-    value = static_cast<int>(number);
+    double number = static_cast<double>(lua_tonumber(state_, index));
+    int value = static_cast<int>(number);
     if (static_cast<double>(value) != number)
-      throw Error("GetValue(int&)",
-                  "The " + Entry(name) + " is not an integer.");
+      if (name.empty())
+        return false;
+      else
+        throw Error("Convert(int&)",
+                    "The " + Entry(name) + " is not an integer.");
 
-    if (!CheckConstraint(name, constraint))
-      throw Error("GetValue(int&)",
-                  "The " + Entry(name) + " does not satisfy "
-                  + "the constraint:\n" + Constraint(constraint));
+    output = value;
+    return true;
+  }
 
-    ClearStack();
+
+  //! Converts an element of the stack to a float.
+  /*!
+    \param[in] index index in the stack.
+    \param[out] output converted value.
+    \param[in] name name of the entry.
+    \return True if the conversion was successful, false otherwise.
+    \note If \a name is not empty and if the conversion fails, an exception is
+    raised by this method. This exception gives the name of the entry and
+    states that it could not be converted. If \a name is empty, no exception
+    is raised.
+  */
+  bool Ops::Convert(int index, float& output, string name)
+  {
+    if (!lua_isnumber(state_, index))
+      if (name.empty())
+        return false;
+      else
+        throw Error("Convert(float&)",
+                    "The " + Entry(name) + " is not a float.");
+
+    output = static_cast<float>(lua_tonumber(state_, index));
+    return true;
+  }
+
+
+  //! Converts an element of the stack to a double.
+  /*!
+    \param[in] index index in the stack.
+    \param[out] output converted value.
+    \param[in] name name of the entry.
+    \return True if the conversion was successful, false otherwise.
+    \note If \a name is not empty and if the conversion fails, an exception is
+    raised by this method. This exception gives the name of the entry and
+    states that it could not be converted. If \a name is empty, no exception
+    is raised.
+  */
+  bool Ops::Convert(int index, double& output, string name)
+  {
+    if (!lua_isnumber(state_, index))
+      if (name.empty())
+        return false;
+      else
+        throw Error("Convert(double&)",
+                    "The " + Entry(name) + " is not a double.");
+
+    output = static_cast<double>(lua_tonumber(state_, index));
+    return true;
+  }
+
+
+  //! Converts an element of the stack to a string.
+  /*!
+    \param[in] index index in the stack.
+    \param[out] output converted value.
+    \param[in] name name of the entry.
+    \return True if the conversion was successful, false otherwise.
+    \note If \a name is not empty and if the conversion fails, an exception is
+    raised by this method. This exception gives the name of the entry and
+    states that it could not be converted. If \a name is empty, no exception
+    is raised.
+  */
+  bool Ops::Convert(int index, string& output, string name)
+  {
+    if (!lua_isstring(state_, index))
+      if (name.empty())
+        return false;
+      else
+        throw Error("Convert(string&)",
+                    "The " + Entry(name) + " is not a string.");
+
+    output = static_cast<string>(lua_tostring(state_, index));
+    return true;
   }
 
 
@@ -376,9 +423,10 @@ namespace Ops
     \param[out] value the value of the entry named \a name.
     \note The default value may not satisfy the constraint.
   */
+  template<class TD, class T>
   void Ops::GetValue(string name, string constraint,
-                     const float& default_value, bool with_default,
-                     float& value)
+                     const TD& default_value, bool with_default,
+                     T& value)
   {
     PutOnStack(Name(name));
 
@@ -390,101 +438,13 @@ namespace Ops
           return;
         }
       else
-        throw Error("GetValue(float&)",
+        throw Error("GetValue",
                     "The " + Entry(name) + " was not found.");
 
-    if (!lua_isnumber(state_, -1))
-      throw Error("GetValue(float&)",
-                  "The " + Entry(name) + " is not a float.");
-
-    value = static_cast<float>(lua_tonumber(state_, -1));
+    Convert(-1, value, name);
 
     if (!CheckConstraint(name, constraint))
-      throw Error("GetValue(float&)",
-                  "The " + Entry(name) + " does not satisfy "
-                  + "the constraint:\n" + Constraint(constraint));
-
-    ClearStack();
-  }
-
-
-  //! Retrieves a value and checks if it satisfies given constraints.
-  /*! If the entry is not found, the default value is returned (if any).
-    \param[in] name name of the entry.
-    \param[in] constraint constraint to be satisfied.
-    \param[in] default_value default value.
-    \param[in] with_default is there a default value? If not, \a default_value
-    is ignored.
-    \param[out] value the value of the entry named \a name.
-    \note The default value may not satisfy the constraint.
-  */
-  void Ops::GetValue(string name, string constraint,
-                     const double& default_value, bool with_default,
-                     double& value)
-  {
-    PutOnStack(Name(name));
-
-    if (lua_isnil(state_, -1))
-      if (with_default)
-        {
-          value = default_value;
-          ClearStack();
-          return;
-        }
-      else
-        throw Error("GetValue(double&)",
-                    "The " + Entry(name) + " was not found.");
-
-    if (!lua_isnumber(state_, -1))
-      throw Error("GetValue(double&)",
-                  "The " + Entry(name) + " is not a double.");
-
-    value = static_cast<double>(lua_tonumber(state_, -1));
-
-    if (!CheckConstraint(name, constraint))
-      throw Error("GetValue(double&)",
-                  "The " + Entry(name) + " does not satisfy "
-                  + "the constraint:\n" + Constraint(constraint));
-
-    ClearStack();
-  }
-
-
-  //! Retrieves a value and checks if it satisfies given constraints.
-  /*! If the entry is not found, the default value is returned (if any).
-    \param[in] name name of the entry.
-    \param[in] constraint constraint to be satisfied.
-    \param[in] default_value default value.
-    \param[in] with_default is there a default value? If not, \a default_value
-    is ignored.
-    \param[out] value the value of the entry named \a name.
-    \note The default value may not satisfy the constraint.
-  */
-  void Ops::GetValue(string name, string constraint,
-                     const string& default_value, bool with_default,
-                     string& value)
-  {
-    PutOnStack(Name(name));
-
-    if (lua_isnil(state_, -1))
-      if (with_default)
-        {
-          value = default_value;
-          ClearStack();
-          return;
-        }
-      else
-        throw Error("GetValue(string&)",
-                    "The " + Entry(name) + " was not found.");
-
-    if (!lua_isstring(state_, -1))
-      throw Error("GetValue(string&)",
-                  "The " + Entry(name) + " is not a string.");
-
-    value = static_cast<string>(lua_tostring(state_, -1));
-
-    if (!CheckConstraint(name, constraint))
-      throw Error("GetValue(string&)",
+      throw Error("GetValue",
                   "The " + Entry(name) + " does not satisfy "
                   + "the constraint:\n" + Constraint(constraint));
 
