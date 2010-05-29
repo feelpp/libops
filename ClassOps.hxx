@@ -29,6 +29,8 @@ namespace Ops
     string file_path_;
     //! Lua state.
     lua_State* state_;
+    //! Prefix to be prepended to the entries names.
+    string prefix_;
 
   public:
     // Constructor and destructor.
@@ -54,6 +56,9 @@ namespace Ops
     string GetFilePath() const;
     lua_State* GetState();
     const lua_State* GetState() const;
+    string GetPrefix() const;
+    void SetPrefix(string prefix);
+    void ClearPrefix();
 
   protected:
     void GetValue(string name, string constraint,
@@ -69,6 +74,7 @@ namespace Ops
                   const string& default_value, bool with_default,
                   string& value);
     string Constraint(string constraint) const;
+    string Name(const string& name) const;
     string Entry(const string& name) const;
     void Split(string str, vector<string>& vect, string delimiters = " \n\t")
       const;

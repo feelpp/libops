@@ -67,12 +67,14 @@ namespace Ops
 
 
   //! Opens a new configuration file.
-  /*! The previous configuration file (if any) is closed.
+  /*! The previous configuration file (if any) is closed. The prefix is
+    cleared.
     \param[in] file_path path to the configuration file.
   */
   void Ops::Open(string file_path)
   {
     Close();
+    ClearPrefix();
     file_path_ = file_path;
     state_ = lua_open();
     luaL_openlibs(state_);
@@ -95,11 +97,12 @@ namespace Ops
 
 
   //! Closes the configuration file (if any is open).
-  /*! Destroys the Lua state object.
+  /*! Destroys the Lua state object. The prefix is cleared.
     \param[in] file_path path to the configuration file.
   */
   void Ops::Close()
   {
+    ClearPrefix();
     if (state_ != NULL)
       lua_close(state_);
   }
@@ -141,7 +144,7 @@ namespace Ops
 
     string code;
     code = "function ops_check_constraint(v)\nreturn " + constraint \
-      + "\nend\nops_result = ops_check_constraint(" + name + ")";
+      + "\nend\nops_result = ops_check_constraint(" + Name(name) + ")";
     if (luaL_dostring(state_, code.c_str()))
       Error("CheckConstraint",
             "While checking " + Entry(name) + ":\n  "
@@ -162,6 +165,7 @@ namespace Ops
     \a name is encapsulated in a table, this method iterates until it finds
     the variable.
     \param[in] name the name of the entry to be put on top of the stack.
+    \note The prefix is not prepended to \a name.
   */
   void Ops::PutOnStack(string name)
   {
@@ -224,6 +228,33 @@ namespace Ops
   }
 
 
+  //! Returns the current prefix.
+  /*!
+    \return The current prefix.
+  */
+  string Ops::GetPrefix() const
+  {
+    return prefix_;
+  }
+
+
+  //! Sets the prefix.
+  /*!
+    \param[in] prefix the new prefix.
+  */
+  void Ops::SetPrefix(string prefix)
+  {
+    prefix_ = prefix;
+  }
+
+
+  //! Clears the current prefix.
+  void Ops::ClearPrefix()
+  {
+    prefix_ = "";
+  }
+
+
   ///////////////////////
   // PROTECTED METHODS //
   ///////////////////////
@@ -243,7 +274,7 @@ namespace Ops
                      const int& default_value, bool with_default,
                      int& value)
   {
-    PutOnStack(name);
+    PutOnStack(Name(name));
 
     if (lua_isnil(state_, -1))
       if (with_default)
@@ -288,7 +319,7 @@ namespace Ops
                      const float& default_value, bool with_default,
                      float& value)
   {
-    PutOnStack(name);
+    PutOnStack(Name(name));
 
     if (lua_isnil(state_, -1))
       if (with_default)
@@ -330,7 +361,7 @@ namespace Ops
                      const double& default_value, bool with_default,
                      double& value)
   {
-    PutOnStack(name);
+    PutOnStack(Name(name));
 
     if (lua_isnil(state_, -1))
       if (with_default)
@@ -372,7 +403,7 @@ namespace Ops
                      const string& default_value, bool with_default,
                      string& value)
   {
-    PutOnStack(name);
+    PutOnStack(Name(name));
 
     if (lua_isnil(state_, -1))
       if (with_default)
@@ -400,6 +431,17 @@ namespace Ops
   }
 
 
+  //! Prepends the prefix to an entry name.
+  /*!
+    \param[in] name name of the entry.
+    \return The entry name with the prefix prepended.
+  */
+  string Ops::Name(const string& name) const
+  {
+    return prefix_ + name;
+  }
+
+
   //! Formats the description of an entry.
   /*!
     \param[in] name name of the entry.
@@ -408,7 +450,7 @@ namespace Ops
   */
   string Ops::Entry(const string& name) const
   {
-    return "entry \"" + name + "\" in \"" + file_path_ + "\"";
+    return "entry \"" + Name(name) + "\" in \"" + file_path_ + "\"";
   }
 
 
