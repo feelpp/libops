@@ -43,11 +43,11 @@ namespace Ops
     void Close();
     template<class TD, class T>
     void
-    Get(string name, string constraint, const TD& default_value, T& value);
+    Set(string name, string constraint, const TD& default_value, T& value);
     template<class T>
-    void Get(string name, string constraint, T& value);
+    void Set(string name, string constraint, T& value);
     template<class T>
-    void Get(string name, T& value);
+    void Set(string name, T& value);
     std::vector<string> GetEntryList(string name = "");
     bool CheckConstraint(string name, string constraint);
     void PutOnStack(string name);
@@ -68,10 +68,10 @@ namespace Ops
     bool Convert(int index, double& output, string name = "");
     bool Convert(int index, string& output, string name = "");
     template<class TD, class T>
-    void GetValue(string name, string constraint,
+    void SetValue(string name, string constraint,
                   const TD& default_value, bool with_default, T& value);
     template<class T>
-    void GetValue(string name, string constraint,
+    void SetValue(string name, string constraint,
                   const std::vector<T>& default_value, bool with_default,
                   std::vector<T>& value);
     string Constraint(string constraint) const;

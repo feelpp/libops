@@ -118,9 +118,9 @@ namespace Ops
   */
   template<class TD, class T>
   void
-  Ops::Get(string name, string constraint, const TD& default_value, T& value)
+  Ops::Set(string name, string constraint, const TD& default_value, T& value)
   {
-    GetValue(name, constraint, default_value, true, value);
+    SetValue(name, constraint, default_value, true, value);
   }
 
 
@@ -131,9 +131,9 @@ namespace Ops
     \param[out] value value of the entry.
   */
   template<class T>
-  void Ops::Get(string name, string constraint, T& value)
+  void Ops::Set(string name, string constraint, T& value)
   {
-    GetValue(name, constraint, value, false, value);
+    SetValue(name, constraint, value, false, value);
   }
 
 
@@ -143,9 +143,9 @@ namespace Ops
     \param[out] value value of the entry.
   */
   template <class T>
-  void Ops::Get(string name, T& value)
+  void Ops::Set(string name, T& value)
   {
-    GetValue(name, "", value, false, value);
+    SetValue(name, "", value, false, value);
   }
 
 
@@ -478,7 +478,7 @@ namespace Ops
     \note The default value may not satisfy the constraint.
   */
   template<class TD, class T>
-  void Ops::GetValue(string name, string constraint,
+  void Ops::SetValue(string name, string constraint,
                      const TD& default_value, bool with_default,
                      T& value)
   {
@@ -492,13 +492,13 @@ namespace Ops
           return;
         }
       else
-        throw Error("GetValue",
+        throw Error("SetValue",
                     "The " + Entry(name) + " was not found.");
 
     Convert(-1, value, name);
 
     if (!CheckConstraint(name, constraint))
-      throw Error("GetValue",
+      throw Error("SetValue",
                   "The " + Entry(name) + " does not satisfy "
                   + "the constraint:\n" + Constraint(constraint));
 
@@ -517,7 +517,7 @@ namespace Ops
     \note The default value may not satisfy the constraint.
   */
   template<class T>
-  void Ops::GetValue(string name, string constraint,
+  void Ops::SetValue(string name, string constraint,
                      const std::vector<T>& default_value, bool with_default,
                      std::vector<T>& value)
   {
@@ -531,11 +531,11 @@ namespace Ops
           return;
         }
       else
-        throw Error("GetValue",
+        throw Error("SetValue",
                     "The " + Entry(name) + " was not found.");
 
     if (!lua_istable(state_, -1))
-      throw Error("GetValue",
+      throw Error("SetValue",
                   "The " + Entry(name) + " is not a table.");
 
     std::vector<T> element_list;
@@ -552,7 +552,7 @@ namespace Ops
         lua_pushvalue(state_, -2);
 
         if (!Convert(-2, key))
-          throw Error("GetValue",
+          throw Error("SetValue",
                       "Unable to read the keys of " + Entry(name) + ".");
         key_list.push_back(key);
 
@@ -564,7 +564,7 @@ namespace Ops
 
     for (int i = 0; i < int(key_list.size()); i++)
       if (!CheckConstraint(name + "[" + key_list[i] + "]", constraint))
-        throw Error("GetValue",
+        throw Error("SetValue",
                     "The " + Entry(name + "[" + key_list[i] + "]")
                     + " does not satisfy the constraint:\n"
                     + Constraint(constraint));
