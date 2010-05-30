@@ -24,23 +24,24 @@
 
 #include "Ops.hxx"
 
-#define OPS_INSTANTIATE_GET(type)                             \
+#define OPS_INSTANTIATE_ALL(type)                             \
   template type Ops::Get(string);                             \
   template type Ops::Get(string, string);                     \
   template type Ops::Get(string, string, const type&);        \
+  template bool Ops::Is<type >(string);                       \
 
 namespace Ops
 {
-  OPS_INSTANTIATE_GET(bool);
-  OPS_INSTANTIATE_GET(int);
-  OPS_INSTANTIATE_GET(float);
-  OPS_INSTANTIATE_GET(double);
-  OPS_INSTANTIATE_GET(string);
-  OPS_INSTANTIATE_GET(std::vector<bool>);
-  OPS_INSTANTIATE_GET(std::vector<int>);
-  OPS_INSTANTIATE_GET(std::vector<float>);
-  OPS_INSTANTIATE_GET(std::vector<double>);
-  OPS_INSTANTIATE_GET(std::vector<string>);
+  OPS_INSTANTIATE_ALL(bool);
+  OPS_INSTANTIATE_ALL(int);
+  OPS_INSTANTIATE_ALL(float);
+  OPS_INSTANTIATE_ALL(double);
+  OPS_INSTANTIATE_ALL(string);
+  OPS_INSTANTIATE_ALL(std::vector<bool>);
+  OPS_INSTANTIATE_ALL(std::vector<int>);
+  OPS_INSTANTIATE_ALL(std::vector<float>);
+  OPS_INSTANTIATE_ALL(std::vector<double>);
+  OPS_INSTANTIATE_ALL(std::vector<string>);
 }
 
 

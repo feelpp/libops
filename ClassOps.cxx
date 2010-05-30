@@ -323,6 +323,21 @@ namespace Ops
   }
 
 
+  //! Checks whether \a name is of type 'T'.
+  /*! On exit, the value of the entry (if it exists) is on the stack.
+    \param[in] name the name of the entry whose type is checked.
+    \return True if the entry is of type 'T', false otherwise.
+    \note The prefix is prepended to \a name. If \a name does not exist, an
+    exception is raised.
+  */
+  template<class T>
+  bool Ops::Is(string name)
+  {
+    T value;
+    return IsParam(name, value);
+  }
+
+
   //! Clears the stack.
   void Ops::ClearStack()
   {
@@ -762,6 +777,65 @@ namespace Ops
             WalkDown(name.substr(end).c_str());
           return;
         }
+  }
+
+
+  //! Checks whether \a name is of type 'T'.
+  /*! On exit, the value of the entry (if it exists) is on the stack.
+    \param[in] name the name of the entry whose type is checked.
+    \param[in] value anything: it is used to determine the type.
+    \return True if the entry is of type 'T', false otherwise.
+    \note The prefix is prepended to \a name. If \a name does not exist, an
+    exception is raised.
+  */
+  template<class T>
+  bool Ops::IsParam(string name, T& value)
+  {
+    PutOnStack(Name(name));
+
+    if (lua_isnil(state_, -1))
+      throw Error("Is(string)",
+                  "The " + Entry(name) + " was not found.");
+
+    return Convert(-1, value);
+  }
+
+
+  //! Checks whether \a name is a table of 'T'.
+  /*!
+    \param[in] name the name of the entry whose type is checked.
+    \param[in] value anything: it is used to determine the type.
+    \return True if the entry is a table of 'T', false otherwise.
+    \note The prefix is prepended to \a name. If \a name does not exist, an
+    exception is raised.
+  */
+  template<class T>
+  bool Ops::IsParam(string name, std::vector<T>& value)
+  {
+    PutOnStack(Name(name));
+
+    if (lua_isnil(state_, -1))
+      throw Error("SetValue",
+                  "The " + Entry(name) + " was not found.");
+
+    if (!lua_istable(state_, -1))
+      return false;
+
+    T element;
+    // Now loops over all elements of the table.
+    lua_pushnil(state_);
+    while (lua_next(state_, -2) != 0)
+      {
+        // Duplicates the value so that 'lua_tostring' (applied to them)
+        // should not interfere with 'lua_next'.
+        lua_pushvalue(state_, -1);
+
+        if (!Convert(-1, element))
+          return false;
+        lua_pop(state_, 2);
+      }
+
+    return true;
   }
 
 

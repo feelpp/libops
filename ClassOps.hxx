@@ -58,6 +58,8 @@ namespace Ops
     bool CheckConstraint(string name, string constraint);
     void PutOnStack(string name);
     bool Exists(string name);
+    template<class T>
+    bool Is(string name);
     void ClearStack();
 
     // Access methods.
@@ -87,6 +89,10 @@ namespace Ops
     string Name(const string& name) const;
     string Entry(const string& name) const;
     void WalkDown(string name);
+    template<class T>
+    bool IsParam(string name, T& value);
+    template<class T>
+    bool IsParam(string name, std::vector<T>& value);
     void Split(string str, std::vector<string>& vect,
                string delimiters = " \n\t") const;
     std::vector<string> Split(string str, string delimiters = " \n\t");

@@ -73,8 +73,9 @@ namespace std
 %include "ClassOps.hxx"
 
 
-%define OPS_INSTANTIATE_GET(suffix, type)
+%define OPS_INSTANTIATE_ALL(suffix, type)
 %template(Get ## suffix) Get<type >;
+%template(Is ## suffix) Is<type >;
 %enddef
 
 namespace Ops
@@ -82,16 +83,16 @@ namespace Ops
 
   %extend Ops
   {
-    OPS_INSTANTIATE_GET(Bool, bool);
-    OPS_INSTANTIATE_GET(Int, int);
-    OPS_INSTANTIATE_GET(Float, float);
-    OPS_INSTANTIATE_GET(Double, double);
-    OPS_INSTANTIATE_GET(String, string);
-    OPS_INSTANTIATE_GET(VectBool, std::vector<bool>);
-    OPS_INSTANTIATE_GET(VectInt, std::vector<int>);
-    OPS_INSTANTIATE_GET(VectFloat, std::vector<float>);
-    OPS_INSTANTIATE_GET(VectDouble, std::vector<double>);
-    OPS_INSTANTIATE_GET(VectString, std::vector<string>);
+    OPS_INSTANTIATE_ALL(Bool, bool);
+    OPS_INSTANTIATE_ALL(Int, int);
+    OPS_INSTANTIATE_ALL(Float, float);
+    OPS_INSTANTIATE_ALL(Double, double);
+    OPS_INSTANTIATE_ALL(String, string);
+    OPS_INSTANTIATE_ALL(VectBool, std::vector<bool>);
+    OPS_INSTANTIATE_ALL(VectInt, std::vector<int>);
+    OPS_INSTANTIATE_ALL(VectFloat, std::vector<float>);
+    OPS_INSTANTIATE_ALL(VectDouble, std::vector<double>);
+    OPS_INSTANTIATE_ALL(VectString, std::vector<string>);
   };
 
 }
