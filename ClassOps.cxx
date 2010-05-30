@@ -234,7 +234,7 @@ namespace Ops
         lua_pop(state_, 2);
       }
 
-    // Sorts the.
+    // Sorts the keys.
     std::sort(key_list.begin(), key_list.end());
 
     ClearStack();
