@@ -85,6 +85,7 @@ namespace Ops
     string Constraint(string constraint) const;
     string Name(const string& name) const;
     string Entry(const string& name) const;
+    void WalkDown(string name);
     void Split(string str, std::vector<string>& vect,
                string delimiters = " \n\t") const;
     std::vector<string> Split(string str, string delimiters = " \n\t");

@@ -41,6 +41,8 @@ extern "C"
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <string>
+#include <sstream>
 
 using std::string;
 

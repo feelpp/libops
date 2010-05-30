@@ -288,20 +288,25 @@ namespace Ops
         return;
       }
 
-    std::vector<string> tree = Split(name, ".");
-
-    lua_getglobal(state_, tree[0].c_str());
-    if (tree.size() == 1)
-      // No table involved here.
-      return;
-
-    for (int i = 1; i < int(tree.size()); i++)
+    size_t end = name.find_first_of(".[");
+    if (end == 0)
+      // The name starts with '.' or '[': wrong syntax.
       {
-        if (lua_isnil(state_, -1))
-          return;
-        lua_pushstring(state_, tree[i].c_str());
-        lua_gettable(state_, -2);
+        lua_pushnil(state_);
+        return;
       }
+    if (end == string::npos)
+      {
+        lua_getglobal(state_, name.c_str());
+        return;
+      }
+
+    lua_getglobal(state_, name.substr(0, end).c_str());
+
+    if (name[end] == '.')
+      WalkDown(name.substr(end + 1).c_str());
+    else
+      WalkDown(name.substr(end).c_str());
   }
 
 
@@ -656,6 +661,88 @@ namespace Ops
       constraint += "\n      Note: 'ops_in(v, array)' checks whether 'v' is "
         "part of the list 'array'.";
     return constraint;
+  }
+
+
+  //! Iterates over the elements of \a name to put it on stack.
+  /*! For instance, if "table.subtable.subsubtable[2]" is to be accessed, one
+    should put "table" on top of the stack and call
+    'WalkDown(subtable.subsubtable[2])'. This method will put the value of
+    "table.subtable.subsubtable[2]" on top of the stack, or nil is any error
+    occurred.
+    \param[in] name the name of an entry that is accessible from the entry
+    currently on top of the stack.
+  */
+  void Ops::WalkDown(string name)
+  {
+    if (name.empty() || lua_isnil(state_, -1))
+      return;
+
+    // The sub-entries are introduced with "." or "[i]".
+    size_t end = name.find_first_of(".[");
+
+    if (end == string::npos)
+      // No more sub-entry here.
+      {
+        lua_pushstring(state_, name.c_str());
+        lua_gettable(state_, -2);
+        return;
+      }
+
+    if (name[end] == '.')
+      // One step down.
+      {
+        lua_pushstring(state_, name.substr(0, end).c_str());
+        lua_gettable(state_, -2);
+        WalkDown(name.substr(end + 1).c_str());
+        return;
+      }
+
+    if (name[end] == '[')
+      if (end == 0)
+        // Access to an element through "[i]".
+        {
+          // First getting the index.
+          size_t end_index = name.find_first_of("]");
+          if (end_index <= end + 1 || end_index == string::npos)
+            // Syntax error: "]" was not found or is misplaced.
+            {
+              lua_pushnil(state_);
+              return;
+            }
+          string index_str = name.substr(end + 1, end_index - end - 1);
+          // Checks whether 'index_str' is an integer.
+          for (int i = 0; i < int(index_str.size()); i++)
+            if (!isdigit(index_str[i]))
+              {
+                lua_pushnil(state_);
+                return;
+              }
+          std::istringstream str(index_str);
+          int index;
+          str >> index;
+          // Now getting the element of index 'index'.
+          lua_rawgeti(state_, -1, index);
+          // And preparing for the next step down.
+          string next_name = name.substr(end_index + 1).c_str();
+          if (!next_name.empty() && next_name[0] == '.')
+            // Removes the dot in the first place.
+            next_name = next_name.substr(1);
+          WalkDown(next_name);
+          return;
+        }
+      else
+        // One step down before addressing "[i]" in the next call to
+        // 'WalkDown'.
+        {
+          lua_pushstring(state_, name.substr(0, end).c_str());
+          lua_gettable(state_, -2);
+          if (name[end] == '.')
+            WalkDown(name.substr(end + 1).c_str());
+          else
+            WalkDown(name.substr(end).c_str());
+          return;
+        }
   }
 
 
