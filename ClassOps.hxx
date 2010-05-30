@@ -57,6 +57,7 @@ namespace Ops
     std::vector<string> GetEntryList(string name = "");
     bool CheckConstraint(string name, string constraint);
     void PutOnStack(string name);
+    bool Exists(string name);
     void ClearStack();
 
     // Access methods.

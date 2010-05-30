@@ -310,6 +310,19 @@ namespace Ops
   }
 
 
+  //! Checks whether \a name exists.
+  /*! On exit, the value of the entry (if it exists) is on the stack.
+    \param[in] name the name of the entry whose existence is checked.
+    \return True if the entry exists, false otherwise.
+    \note The prefix is prepended to \a name.
+  */
+  bool Ops::Exists(string name)
+  {
+    PutOnStack(Name(name));
+    return !lua_isnil(state_, -1);
+  }
+
+
   //! Clears the stack.
   void Ops::ClearStack()
   {
