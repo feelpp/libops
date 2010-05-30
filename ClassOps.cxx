@@ -96,6 +96,14 @@ namespace Ops
   }
 
 
+  //! Reloads the current configuration file.
+  /*! The configuration file is closed and reopened. */
+  void Ops::Reload()
+  {
+    Open(file_path_);
+  }
+
+
   //! Closes the configuration file (if any is open).
   /*! Destroys the Lua state object. The prefix is cleared.
     \param[in] file_path path to the configuration file.

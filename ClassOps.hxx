@@ -40,6 +40,7 @@ namespace Ops
 
     // Main methods.
     void Open(string file_path);
+    void Reload();
     void Close();
     template<class TD, class T>
     void
