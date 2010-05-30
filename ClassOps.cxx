@@ -715,6 +715,12 @@ namespace Ops
       if (end == 0)
         // Access to an element through "[i]".
         {
+          // The element on stack must be a table.
+          if (!lua_istable(state_, -1))
+            {
+              lua_pushnil(state_);
+              return;
+            }
           // First getting the index.
           size_t end_index = name.find_first_of("]");
           if (end_index <= end + 1 || end_index == string::npos)
