@@ -63,6 +63,9 @@ namespace Ops
     bool Is(string name);
     void ClearStack();
 
+    void DoFile(string file_path);
+    void DoString(string expression);
+
     // Access methods.
     string GetFilePath() const;
     lua_State* GetState();

@@ -354,6 +354,28 @@ namespace Ops
   }
 
 
+  //! Execute Lua code.
+  /*!
+    \param[in] file_path path to the file to be processed.
+  */
+  void Ops::DoFile(string file_path)
+  {
+    if (luaL_dofile(state_, file_path.c_str()))
+      Error("DoFile(string)", lua_tostring(state_, -1));
+  }
+
+
+  //! Execute Lua code.
+  /*!
+    \param[in] expression the Lua code to be evaluated.
+  */
+  void Ops::DoString(string expression)
+  {
+    if (luaL_dostring(state_, expression.c_str()))
+      Error("DoString(string)", lua_tostring(state_, -1));
+  }
+
+
   ////////////////////
   // ACCESS METHODS //
   ////////////////////
