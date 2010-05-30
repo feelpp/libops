@@ -93,9 +93,6 @@ namespace Ops
     bool IsParam(string name, T& value);
     template<class T>
     bool IsParam(string name, std::vector<T>& value);
-    void Split(string str, std::vector<string>& vect,
-               string delimiters = " \n\t") const;
-    std::vector<string> Split(string str, string delimiters = " \n\t");
   };
 
 }

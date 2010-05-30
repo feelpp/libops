@@ -839,49 +839,6 @@ namespace Ops
   }
 
 
-  //! Splits a string.
-  /*!  The string is split according to delimiters and elements are stored in
-    the vector \a vect.
-    \param[in] str string to be split.
-    \param[out] vect (output) vector containing the elements of the string.
-    \param[in] delimiters (optional) delimiters. Default: " \n\t".
-  */
-  void Ops::Split(string str, std::vector<string>& vect, string delimiters)
-    const
-  {
-    vect.clear();
-
-    string tmp;
-    string::size_type index_beg, index_end;
-
-    index_beg = str.find_first_not_of(delimiters);
-
-    while (index_beg != string::npos)
-      {
-	index_end = str.find_first_of(delimiters, index_beg);
-	tmp = str.substr(index_beg, index_end == string::npos ?
-                         string::npos : (index_end - index_beg));
-	vect.push_back(tmp);
-	index_beg = str.find_first_not_of(delimiters, index_end);
-      }
-  }
-
-
-  //! Splits a string.
-  /*!
-    The string is split according to delimiters.
-    \param[in] str string to be split.
-    \param[in] delimiters (optional) delimiters. Default: " \n\t".
-    \return A vector containing elements of the string.
-  */
-  std::vector<string> Ops::Split(string str, string delimiters)
-  {
-    std::vector<string> vect;
-    Split(str, vect, delimiters);
-    return vect;
-  }
-
-
 }
 
 
