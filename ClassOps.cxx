@@ -105,6 +105,7 @@ namespace Ops
     ClearPrefix();
     if (state_ != NULL)
       lua_close(state_);
+    state_ = NULL;
   }
 
 
