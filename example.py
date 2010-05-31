@@ -27,9 +27,9 @@ print "Nationality:", ops.GetVectString("nationality")
 entry_list = ops.GetEntryList("name")
 print "Entries:", entry_list
 
-print "Middle name:", ops.GetString("name." + entry_list[1])
+print "Middle name:", ops.GetString("name." + entry_list[2])
 ops.SetPrefix("name.")
-print "Middle name:", ops.GetString(entry_list[1])
+print "Middle name:", ops.GetString(entry_list[2])
 
 ### Constraints
 

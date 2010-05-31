@@ -36,10 +36,10 @@ int main(int argc, char *argv[])
   cout << "Entries in \"name\": " << str_vector[0] << ", " << str_vector[1]
        << ", " << str_vector[2] << endl;
 
-  cout << "Middle name: " << ops.Get<string>("name." + str_vector[1]) << endl;
+  cout << "Middle name: " << ops.Get<string>("name." + str_vector[2]) << endl;
   // One may use a prefix.
   ops.SetPrefix("name.");
-  cout << "Middle name: " << ops.Get<string>(str_vector[1]) << endl;
+  cout << "Middle name: " << ops.Get<string>(str_vector[2]) << endl;
 
   /*** Constraints ***/
 
