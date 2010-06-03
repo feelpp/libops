@@ -73,7 +73,17 @@ namespace std
 %include "ClassOps.hxx"
 
 
-%define OPS_INSTANTIATE_ALL(suffix, type)
+%define OPS_INSTANTIATE_ELEMENT(suffix, type)
+%template(Get ## suffix) Get<type >;
+%template(Apply ## suffix) Apply<type >;
+%template(Is ## suffix) Is<type >;
+%enddef
+
+%define OPS_INSTANTIATE_CROSSED_ELEMENT(suffix0, type0, suffix1, type1)
+%template(Apply ## suffix0 ## suffix1) Apply<type0, type1 >;
+%enddef
+
+%define OPS_INSTANTIATE_VECTOR(suffix, type)
 %template(Get ## suffix) Get<type >;
 %template(Is ## suffix) Is<type >;
 %enddef
@@ -83,16 +93,41 @@ namespace Ops
 
   %extend Ops
   {
-    OPS_INSTANTIATE_ALL(Bool, bool);
-    OPS_INSTANTIATE_ALL(Int, int);
-    OPS_INSTANTIATE_ALL(Float, float);
-    OPS_INSTANTIATE_ALL(Double, double);
-    OPS_INSTANTIATE_ALL(String, string);
-    OPS_INSTANTIATE_ALL(VectBool, std::vector<bool>);
-    OPS_INSTANTIATE_ALL(VectInt, std::vector<int>);
-    OPS_INSTANTIATE_ALL(VectFloat, std::vector<float>);
-    OPS_INSTANTIATE_ALL(VectDouble, std::vector<double>);
-    OPS_INSTANTIATE_ALL(VectString, std::vector<string>);
+    OPS_INSTANTIATE_ELEMENT(Bool, bool);
+    OPS_INSTANTIATE_ELEMENT(Int, int);
+    OPS_INSTANTIATE_ELEMENT(Float, float);
+    OPS_INSTANTIATE_ELEMENT(Double, double);
+    OPS_INSTANTIATE_ELEMENT(String, string);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Bool, bool, Bool, bool);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Int, int, Bool, bool);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Float, float, Bool, bool);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Double, double, Bool, bool);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(String, string, Bool, bool);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Bool, bool, Int, int);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Int, int, Int, int);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Float, float, Int, int);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Double, double, Int, int);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(String, string, Int, int);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Bool, bool, Float, float);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Int, int, Float, float);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Float, float, Float, float);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Double, double, Float, float);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(String, string, Float, float);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Bool, bool, Double, double);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Int, int, Double, double);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Float, float, Double, double);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Double, double, Double, double);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(String, string, Double, double);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Bool, bool, String, string);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Int, int, String, string);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Float, float, String, string);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(Double, double, String, string);
+    OPS_INSTANTIATE_CROSSED_ELEMENT(String, string, String, string);
+    OPS_INSTANTIATE_VECTOR(VectBool, std::vector<bool>);
+    OPS_INSTANTIATE_VECTOR(VectInt, std::vector<int>);
+    OPS_INSTANTIATE_VECTOR(VectFloat, std::vector<float>);
+    OPS_INSTANTIATE_VECTOR(VectDouble, std::vector<double>);
+    OPS_INSTANTIATE_VECTOR(VectString, std::vector<string>);
   };
 
 }

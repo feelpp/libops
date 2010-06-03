@@ -57,7 +57,7 @@ namespace Ops
     T Get(string name, string constraint, const T& default_value);
     template<class Tin, class Tout>
     void Apply(string name, const std::vector<Tin>& in,
-               std::vector<Tout>& out);
+               std::vector<Tout>& OUTPUT);
     template<class T>
     T Apply(string name, const T& arg0);
     template<class T>
@@ -99,6 +99,8 @@ namespace Ops
     void ClearPrefix();
 
   protected:
+    bool Convert(int index, std::vector<bool>::reference output,
+                 string name = "");
     bool Convert(int index, bool& output, string name = "");
     bool Convert(int index, int& output, string name = "");
     bool Convert(int index, float& output, string name = "");

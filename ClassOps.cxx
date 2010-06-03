@@ -252,7 +252,7 @@ namespace Ops
   template<class T>
   T Ops::Apply(string name, const T& arg0)
   {
-    vector<T> in, out;
+    std::vector<T> in, out;
     in.push_back(arg0);
     Apply(name, in, out);
     return out[0];
@@ -270,7 +270,7 @@ namespace Ops
   template<class T>
   T Ops::Apply(string name, const T& arg0, const T& arg1)
   {
-    vector<T> in, out;
+    std::vector<T> in, out;
     in.push_back(arg0);
     in.push_back(arg1);
     Apply(name, in, out);
@@ -290,7 +290,7 @@ namespace Ops
   template<class T>
   T Ops::Apply(string name, const T& arg0, const T& arg1, const T& arg2)
   {
-    vector<T> in, out;
+    std::vector<T> in, out;
     in.push_back(arg0);
     in.push_back(arg1);
     in.push_back(arg2);
@@ -313,7 +313,7 @@ namespace Ops
   T Ops::Apply(string name, const T& arg0, const T& arg1, const T& arg2,
                const T& arg3)
   {
-    vector<T> in, out;
+    std::vector<T> in, out;
     in.push_back(arg0);
     in.push_back(arg1);
     in.push_back(arg2);
@@ -338,7 +338,7 @@ namespace Ops
   T Ops::Apply(string name, const T& arg0, const T& arg1, const T& arg2,
                const T& arg3, const T& arg4)
   {
-    vector<T> in, out;
+    std::vector<T> in, out;
     in.push_back(arg0);
     in.push_back(arg1);
     in.push_back(arg2);
@@ -649,6 +649,33 @@ namespace Ops
   ///////////////////////
   // PROTECTED METHODS //
   ///////////////////////
+
+
+  //! Converts an element of the stack to a reference to a single bit.
+  /*! This is method is needed because a reference to an element of
+    'std::vector<bool>' is not a reference to a Boolean but to a single bit.
+    \param[in] index index in the stack.
+    \param[out] output converted value.
+    \param[in] name name of the entry.
+    \return True if the conversion was successful, false otherwise.
+    \note If \a name is not empty and if the conversion fails, an exception is
+    raised by this method. This exception gives the name of the entry and
+    states that it could not be converted. If \a name is empty, no exception
+    is raised.
+  */
+  bool Ops::Convert(int index, std::vector<bool>::reference output,
+                    string name)
+  {
+    if (!lua_isboolean(state_, index))
+      if (name.empty())
+        return false;
+      else
+        throw Error("Convert(vector<bool>::reference&)",
+                    "The " + Entry(name) + " is not a Boolean.");
+
+    output = static_cast<bool>(lua_toboolean(state_, index));
+    return true;
+  }
 
 
   //! Converts an element of the stack to a Boolean.
