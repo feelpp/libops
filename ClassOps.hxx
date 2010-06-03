@@ -55,10 +55,32 @@ namespace Ops
     T Get(string name, string constraint);
     template<class T>
     T Get(string name, string constraint, const T& default_value);
+    template<class Tin, class Tout>
+    void Apply(string name, const std::vector<Tin>& in,
+               std::vector<Tout>& out);
+    template<class T>
+    T Apply(string name, const T& arg0);
+    template<class T>
+    T Apply(string name, const T& arg0, const T& arg1);
+    template<class T>
+    T Apply(string name, const T& arg0, const T& arg1, const T& arg2);
+    template<class T>
+    T Apply(string name, const T& arg0, const T& arg1, const T& arg2,
+            const T& arg3);
+    template<class T>
+    T Apply(string name, const T& arg0, const T& arg1, const T& arg2,
+            const T& arg3, const T& arg4);
     std::vector<string> GetEntryList(string name = "");
     bool CheckConstraint(string name, string constraint);
     void PutOnStack(string name);
     bool Exists(string name);
+    void PushOnStack(bool value);
+    void PushOnStack(int value);
+    void PushOnStack(float value);
+    void PushOnStack(double value);
+    void PushOnStack(string value);
+    template<class T>
+    void PushOnStack(const std::vector<T>& v);
     template<class T>
     bool Is(string name);
     void ClearStack();
@@ -92,6 +114,7 @@ namespace Ops
     string Constraint(string constraint) const;
     string Name(const string& name) const;
     string Entry(const string& name) const;
+    string Function(const string& name) const;
     void WalkDown(string name);
     template<class T>
     bool IsParam(string name, T& value);

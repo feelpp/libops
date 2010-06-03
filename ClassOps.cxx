@@ -204,6 +204,151 @@ namespace Ops
   }
 
 
+  //! Applies a Lua function.
+  /*!
+    \param[in] name name of the function.
+    \param[in] in parameters of the function.
+    \param[out] out outputs of the function.
+    \note The prefix is prepended to \a name.
+  */
+  template<class Tin, class Tout>
+  void Ops::Apply(string name, const std::vector<Tin>& in,
+                  std::vector<Tout>& out)
+  {
+    PutOnStack(Name(name));
+    PushOnStack(in);
+
+    int n = lua_gettop(state_);
+
+    if (lua_pcall(state_, int(in.size()), LUA_MULTRET, 0) != 0)
+      throw Error("Apply(string, vector, vector&)",
+                  "While calling " + Function(name) + ":\n  "
+                  + lua_tostring(state_, -1));
+
+    n = lua_gettop(state_) - n + 1 + int(in.size());
+
+    out.resize(n);
+    for (int i = 0; i < n; i++)
+      if (!Convert(i - n, out[i]))
+        {
+          std::ostringstream str;
+          str << i;
+          throw Error("Apply(string, vector, vector&)",
+                      "The returned value #" + str.str() + " of \""
+                      + Name(name) + "\" is not of correct type.");
+        }
+
+    ClearStack();
+  }
+
+
+  //! Applies a Lua function.
+  /*!
+    \param[in] name name of the function.
+    \param[in] arg0 parameter of the function.
+    \return First output of the function.
+    \note The prefix is prepended to \a name.
+  */
+  template<class T>
+  T Ops::Apply(string name, const T& arg0)
+  {
+    vector<T> in, out;
+    in.push_back(arg0);
+    Apply(name, in, out);
+    return out[0];
+  }
+
+
+  //! Applies a Lua function.
+  /*!
+    \param[in] name name of the function.
+    \param[in] arg0 parameter of the function.
+    \param[in] arg1 parameter of the function.
+    \return First output of the function.
+    \note The prefix is prepended to \a name.
+  */
+  template<class T>
+  T Ops::Apply(string name, const T& arg0, const T& arg1)
+  {
+    vector<T> in, out;
+    in.push_back(arg0);
+    in.push_back(arg1);
+    Apply(name, in, out);
+    return out[0];
+  }
+
+
+  //! Applies a Lua function.
+  /*!
+    \param[in] name name of the function.
+    \param[in] arg0 parameter of the function.
+    \param[in] arg1 parameter of the function.
+    \param[in] arg2 parameter of the function.
+    \return First output of the function.
+    \note The prefix is prepended to \a name.
+  */
+  template<class T>
+  T Ops::Apply(string name, const T& arg0, const T& arg1, const T& arg2)
+  {
+    vector<T> in, out;
+    in.push_back(arg0);
+    in.push_back(arg1);
+    in.push_back(arg2);
+    Apply(name, in, out);
+    return out[0];
+  }
+
+
+  //! Applies a Lua function.
+  /*!
+    \param[in] name name of the function.
+    \param[in] arg0 parameter of the function.
+    \param[in] arg1 parameter of the function.
+    \param[in] arg2 parameter of the function.
+    \param[in] arg3 parameter of the function.
+    \return First output of the function.
+    \note The prefix is prepended to \a name.
+  */
+  template<class T>
+  T Ops::Apply(string name, const T& arg0, const T& arg1, const T& arg2,
+               const T& arg3)
+  {
+    vector<T> in, out;
+    in.push_back(arg0);
+    in.push_back(arg1);
+    in.push_back(arg2);
+    in.push_back(arg3);
+    Apply(name, in, out);
+    return out[0];
+  }
+
+
+  //! Applies a Lua function.
+  /*!
+    \param[in] name name of the function.
+    \param[in] arg0 parameter of the function.
+    \param[in] arg1 parameter of the function.
+    \param[in] arg2 parameter of the function.
+    \param[in] arg3 parameter of the function.
+    \param[in] arg4 parameter of the function.
+    \return First output of the function.
+    \note The prefix is prepended to \a name.
+  */
+  template<class T>
+  T Ops::Apply(string name, const T& arg0, const T& arg1, const T& arg2,
+               const T& arg3, const T& arg4)
+  {
+    vector<T> in, out;
+    in.push_back(arg0);
+    in.push_back(arg1);
+    in.push_back(arg2);
+    in.push_back(arg3);
+    in.push_back(arg4);
+    Apply(name, in, out);
+    return out[0];
+  }
+
+
   //! Returns the list of entries inside an entry.
   /*!
     \param[in] name name of the entry to search in.
@@ -344,6 +489,69 @@ namespace Ops
   {
     T value;
     return IsParam(name, value);
+  }
+
+
+  //! Pushes an element onto the stack.
+  /*!
+    \param[in] value element to be pushed.
+  */
+  void Ops::PushOnStack(bool value)
+  {
+    lua_pushboolean(state_, value);
+  }
+
+
+  //! Pushes an element onto the stack.
+  /*!
+    \param[in] value element to be pushed.
+  */
+  void Ops::PushOnStack(int value)
+  {
+    lua_pushinteger(state_, value);
+  }
+
+
+  //! Pushes an element onto the stack.
+  /*!
+    \param[in] value element to be pushed.
+  */
+  void Ops::PushOnStack(float value)
+  {
+    lua_pushnumber(state_, value);
+  }
+
+
+  //! Pushes an element onto the stack.
+  /*!
+    \param[in] value element to be pushed.
+  */
+  void Ops::PushOnStack(double value)
+  {
+    lua_pushnumber(state_, value);
+  }
+
+
+  //! Pushes an element onto the stack.
+  /*!
+    \param[in] value element to be pushed.
+  */
+  void Ops::PushOnStack(string value)
+  {
+    lua_pushstring(state_, value.c_str());
+  }
+
+
+  //! Pushes a vector onto the stack.
+  /*! Every element of the vector \a v is pushed onto the stack, in the same
+    order as in the vector.
+    \param[in] v vector to be pushed.
+  */
+  template<class T>
+  void Ops::PushOnStack(const std::vector<T>& v)
+  {
+    for (int i = 0; i < int(v.size()); i++)
+      PushOnStack(v[i]);
   }
 
 
@@ -705,6 +913,18 @@ namespace Ops
   string Ops::Entry(const string& name) const
   {
     return "entry \"" + Name(name) + "\" in \"" + file_path_ + "\"";
+  }
+
+
+  //! Formats the description of a function.
+  /*!
+    \param[in] name name of the function.
+    \return A string with the function name and the path to the configuration
+    file, both quoted.
+  */
+  string Ops::Function(const string& name) const
+  {
+    return "function \"" + Name(name) + "\" in \"" + file_path_ + "\"";
   }
 
 

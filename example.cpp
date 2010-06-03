@@ -67,5 +67,20 @@ int main(int argc, char *argv[])
   // give a constraint as well (second paramater), but it may be empty.
   bool show = ops.Get<bool>("Show_compositions", "", true);
 
+  /*** Functions ***/
+
+  // Lua functions may be called from C++.
+  cout << "Call to function \"sum\": " << ops.Apply("sum", 1, 2, 3) << endl;
+
+  // If the function has many input parameters, or if it has more than one
+  // returned value, vectors may be used.
+  vector<double> in, out;
+  in.push_back(1.);
+  in.push_back(2.5);
+  in.push_back(3.);
+  ops.Apply("sum_product", in, out);
+  cout << "Call to function \"sum_product\": " << out[0]
+       << ", " << out[1] << endl;
+
   return 0;
 }

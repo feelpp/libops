@@ -23,3 +23,12 @@ death_age = 1759 - birth_year
 one_composition = compositions.suites[1] -- warning: indexes start at 1.
 -- Concatenation of strings:
 full_name = name.first_name.." "..name.last_name
+
+-- Functions may be defined:
+function sum(i, j, k)
+   return i + j + k
+end
+
+function sum_product(i, j, k)
+   return i + j + k, i * j * k
+end
