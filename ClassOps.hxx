@@ -83,6 +83,7 @@ namespace Ops
     void PushOnStack(const std::vector<T>& v);
     template<class T>
     bool Is(string name);
+    bool IsFunction(string name);
     void ClearStack();
 
     void DoFile(string file_path);
