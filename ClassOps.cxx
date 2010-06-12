@@ -1107,7 +1107,7 @@ namespace Ops
     PutOnStack(Name(name));
 
     if (lua_isnil(state_, -1))
-      throw Error("SetValue",
+      throw Error("IsParam",
                   "The " + Entry(name) + " was not found.");
 
     if (!lua_istable(state_, -1))
