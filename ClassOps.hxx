@@ -32,6 +32,27 @@ namespace Ops
     //! Prefix to be prepended to the entries names.
     string prefix_;
 
+    //! Names and values of all Booleans read in the file.
+    std::map<string, bool> read_bool;
+    //! Names and values of all integer read in the file.
+    std::map<string, int> read_int;
+    //! Names and values of all floats read in the file.
+    std::map<string, float> read_float;
+    //! Names and values of all doubles read in the file.
+    std::map<string, double> read_double;
+    //! Names and values of all strings read in the file.
+    std::map<string, string> read_string;
+    //! Names and values of all vectors of Booleans read in the file.
+    std::map<string, std::vector<bool> > read_vect_bool;
+    //! Names and values of all vectors of integers read in the file.
+    std::map<string, std::vector<int> > read_vect_int;
+    //! Names and values of all vectors of floats read in the file.
+    std::map<string, std::vector<float> > read_vect_float;
+    //! Names and values of all vectors of doubles read in the file.
+    std::map<string, std::vector<double> > read_vect_double;
+    //! Names and values of all vectors of strings read in the file.
+    std::map<string, std::vector<string> > read_vect_string;
+
   public:
     // Constructor and destructor.
     Ops();
@@ -98,6 +119,10 @@ namespace Ops
     string GetPrefix() const;
     void SetPrefix(string prefix);
     void ClearPrefix();
+    std::vector<string> GetReadEntryList();
+    string LuaDefinition(string name);
+    string LuaDefinition();
+    void WriteLuaDefinition(string file_name);
 
   protected:
     bool Convert(int index, std::vector<bool>::reference output,
@@ -123,7 +148,19 @@ namespace Ops
     bool IsParam(string name, T& value);
     template<class T>
     bool IsParam(string name, std::vector<T>& value);
-  };
+    void Push(string name, const bool& value);
+    void Push(string name, const int& value);
+    void Push(string name, const float& value);
+    void Push(string name, const double& value);
+    void Push(string name, const string& value);
+    void Push(string name, const std::vector<bool>& value);
+    void Push(string name, const std::vector<int>& value);
+    void Push(string name, const std::vector<float>& value);
+    void Push(string name, const std::vector<double>& value);
+    void Push(string name, const std::vector<string>& value);
+    template<class TK, class T>
+    void AppendKey(const std::map<TK, T>& input, std::vector<TK>& vect);
+ };
 
 }
 

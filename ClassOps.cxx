@@ -111,6 +111,16 @@ namespace Ops
   void Ops::Close()
   {
     ClearPrefix();
+    read_bool.clear();
+    read_int.clear();
+    read_float.clear();
+    read_double.clear();
+    read_string.clear();
+    read_vect_bool.clear();
+    read_vect_int.clear();
+    read_vect_float.clear();
+    read_vect_double.clear();
+    read_vect_string.clear();
     if (state_ != NULL)
       lua_close(state_);
     state_ = NULL;
@@ -660,6 +670,235 @@ namespace Ops
   }
 
 
+  //! Returns the list of the entry names that were read.
+  /*!
+    \return The list of the entries that were read, except the functions. The
+    names are sorted.
+  */
+  std::vector<string> Ops::GetReadEntryList()
+  {
+    std::vector<string> name_list;
+    AppendKey(read_bool, name_list);
+    AppendKey(read_int, name_list);
+    AppendKey(read_float, name_list);
+    AppendKey(read_double, name_list);
+    AppendKey(read_string, name_list);
+    AppendKey(read_vect_bool, name_list);
+    AppendKey(read_vect_int, name_list);
+    AppendKey(read_vect_float, name_list);
+    AppendKey(read_vect_double, name_list);
+    AppendKey(read_vect_string, name_list);
+
+    sort(name_list.begin(), name_list.end());
+    name_list.erase(std::unique(name_list.begin(), name_list.end()),
+                    name_list.end());
+
+    return name_list;
+  }
+
+
+  //! Returns a Lua line that defines an entry already read.
+  /*! If the entry was not already read, an exception is thrown.
+    \param[in] name name of the entry.
+    \return A Lua line that defines \a name. It is in the form "name = value".
+    \warning The entry may have any type supported by Ops, except a function.
+    \note The prefix is not prepended to \a name.
+  */
+  string Ops::LuaDefinition(string name)
+  {
+    std::ostringstream output;
+
+    // Below, the name is searched in all maps. When the name is found, its
+    // value is converted to a string (that Lua can process).
+
+    std::map<string, bool>::iterator i_bool = read_bool.find(name);
+    if (i_bool != read_bool.end())
+      if (i_bool->second)
+        output << name << " = true";
+      else
+        output << name << " = false";
+    // In case the entry was read under two different types, only one type is
+    // returned. So, once the entry is found, this method returns the
+    // definition.
+    if (!output.str().empty())
+      return output.str();
+
+    std::map<string, int>::iterator i_int = read_int.find(name);
+    if (i_int != read_int.end())
+      output << name << " = " << i_int->second;
+    if (!output.str().empty())
+      return output.str();
+
+    std::map<string, float>::iterator i_float = read_float.find(name);
+    if (i_float != read_float.end())
+      output << name << " = " << i_float->second;
+    if (!output.str().empty())
+      return output.str();
+
+    std::map<string, double>::iterator i_double = read_double.find(name);
+    if (i_double != read_double.end())
+      output << name << " = " << i_double->second;
+    if (!output.str().empty())
+      return output.str();
+
+    std::map<string, string>::iterator i_string = read_string.find(name);
+    if (i_string != read_string.end())
+      output << name << " = \"" << i_string->second << "\"";
+    if (!output.str().empty())
+      return output.str();
+
+    std::map<string, std::vector<bool> >::iterator i_vect_bool
+      = read_vect_bool.find(name);
+    if (i_vect_bool != read_vect_bool.end())
+      {
+        output << name << " = {";
+        int size = i_vect_bool->second.size();
+        for (int i = 0; i < size - 1; i++)
+          if (i_vect_bool->second[i])
+            output << "true, ";
+          else
+            output << "false, ";
+        if (size != 0)
+          if (i_vect_bool->second[size - 1])
+            output << "true";
+          else
+            output << "false";
+        output << "}";
+      }
+    if (!output.str().empty())
+      return output.str();
+
+    std::map<string, std::vector<int> >::iterator i_vect_int
+      = read_vect_int.find(name);
+    if (i_vect_int != read_vect_int.end())
+      {
+        output << name << " = {";
+        int size = i_vect_int->second.size();
+        for (int i = 0; i < size - 1; i++)
+          output << i_vect_int->second[i] << ", ";
+        if (size != 0)
+          output << i_vect_int->second[size - 1];
+        output << "}";
+      }
+    if (!output.str().empty())
+      return output.str();
+
+    std::map<string, std::vector<float> >::iterator i_vect_float
+      = read_vect_float.find(name);
+    if (i_vect_float != read_vect_float.end())
+      {
+        output << name << " = {";
+        int size = i_vect_float->second.size();
+        for (int i = 0; i < size - 1; i++)
+          output << i_vect_float->second[i] << ", ";
+        if (size != 0)
+          output << i_vect_float->second[size - 1];
+        output << "}";
+      }
+    if (!output.str().empty())
+      return output.str();
+
+    std::map<string, std::vector<double> >::iterator i_vect_double
+      = read_vect_double.find(name);
+    if (i_vect_double != read_vect_double.end())
+      {
+        output << name << " = {";
+        int size = i_vect_double->second.size();
+        for (int i = 0; i < size - 1; i++)
+          output << i_vect_double->second[i] << ", ";
+        if (size != 0)
+          output << i_vect_double->second[size - 1];
+        output << "}";
+      }
+    if (!output.str().empty())
+      return output.str();
+
+    std::map<string, std::vector<string> >::iterator i_vect_string
+      = read_vect_string.find(name);
+    if (i_vect_string != read_vect_string.end())
+      {
+        output << name << " = {";
+        int size = i_vect_string->second.size();
+        for (int i = 0; i < size - 1; i++)
+          output << "\"" << i_vect_string->second[i] << "\", ";
+        if (size != 0)
+          output << "\"" << i_vect_string->second[size - 1] << "\"";
+        output << "}";
+      }
+    if (!output.str().empty())
+      return output.str();
+
+    if (output.str() == "")
+      throw Error("LuaDefinition(string)", "Entry \"" + name
+                  + "\" was not read yet in file \"" + file_path_ + "\".");
+
+    return output.str();
+  }
+
+
+  //! Returns the Lua definitions of all read variables.
+  /*! The variables are returned in alphabetical order.
+    \return The Lua definitions of all read variables.
+  */
+  string Ops::LuaDefinition()
+  {
+    std::vector<string> name_list = GetReadEntryList();
+
+    string output;
+    std::vector<string>::iterator name;
+    string previous_name = "";
+    for (name = name_list.begin(); name != name_list.end(); name++)
+      {
+        // If '*name' is (or is part of) a new variable, inserts a new
+        // line. Otherwise, '*name' is part of a table being written, so no
+        // newline should be inserted.
+        if (!previous_name.empty()
+            && previous_name.substr(0, previous_name.find("."))
+            != name->substr(0, name->find(".")))
+          output += "\n";
+
+        // Checks whether a new table is introduced. In this case, it should
+        // be declared first, with "name = {}".
+        if (name->find(".") != string::npos)
+          {
+            string::size_type i = 0;
+            string::size_type min_length
+              = std::min(name->size(), previous_name.size());
+            // Checks until where the previous name and the current name
+            // coincide.
+            while (i < min_length && previous_name[i] == (*name)[i])
+              i++;
+            while ((i = name->find(".", i)) != string::npos)
+              output += name->substr(0, i++) + " = {}\n";
+          }
+
+        output += LuaDefinition(*name) + "\n";
+
+        previous_name = *name;
+      }
+
+    return output;
+  }
+
+
+  //! Writes the Lua definitions of all read variables.
+  /*! The variables are written in alphabetical order.
+    \param[in] file_name the name of the file in which the definitions are
+    written.
+    \note The functions are omitted.
+    \warning If the output file already exists, it is cleared.
+  */
+  void Ops::WriteLuaDefinition(string file_name)
+  {
+    std::ofstream f(file_name.c_str());
+    f << LuaDefinition();
+    if (!f.good())
+      throw Error("WriteLuaDefinition",
+                  "Failed to write in \"" + file_name + "\".");
+    f.close();
+  }
+
+
   ///////////////////////
   // PROTECTED METHODS //
   ///////////////////////
@@ -862,6 +1101,8 @@ namespace Ops
                   + "the constraint:\n" + Constraint(constraint));
 
     ClearStack();
+
+    Push(Name(name), value);
   }
 
 
@@ -931,6 +1172,8 @@ namespace Ops
     value = element_list;
 
     ClearStack();
+
+    Push(Name(name), value);
   }
 
 
@@ -1128,6 +1371,130 @@ namespace Ops
       }
 
     return true;
+  }
+
+
+  //! Stores the value of an entry.
+  /*!
+    \param[in] name the name of the entry.
+    \param[in] value the value of the entry.
+  */
+  void Ops::Push(string name, const bool& value)
+  {
+    read_bool[name] = value;
+  }
+
+
+  //! Stores the value of an entry.
+  /*!
+    \param[in] name the name of the entry.
+    \param[in] value the value of the entry.
+  */
+  void Ops::Push(string name, const int& value)
+  {
+    read_int[name] = value;
+  }
+
+
+  //! Stores the value of an entry.
+  /*!
+    \param[in] name the name of the entry.
+    \param[in] value the value of the entry.
+  */
+  void Ops::Push(string name, const float& value)
+  {
+    read_float[name] = value;
+  }
+
+
+  //! Stores the value of an entry.
+  /*!
+    \param[in] name the name of the entry.
+    \param[in] value the value of the entry.
+  */
+  void Ops::Push(string name, const double& value)
+  {
+    read_double[name] = value;
+  }
+
+
+  //! Stores the value of an entry.
+  /*!
+    \param[in] name the name of the entry.
+    \param[in] value the value of the entry.
+  */
+  void Ops::Push(string name, const string& value)
+  {
+    read_string[name] = value;
+  }
+
+
+  //! Stores the value of an entry.
+  /*!
+    \param[in] name the name of the entry.
+    \param[in] value the value of the entry.
+  */
+  void Ops::Push(string name, const std::vector<bool>& value)
+  {
+    read_vect_bool[name] = value;
+  }
+
+
+  //! Stores the value of an entry.
+  /*!
+    \param[in] name the name of the entry.
+    \param[in] value the value of the entry.
+  */
+  void Ops::Push(string name, const std::vector<int>& value)
+  {
+    read_vect_int[name] = value;
+  }
+
+
+  //! Stores the value of an entry.
+  /*!
+    \param[in] name the name of the entry.
+    \param[in] value the value of the entry.
+  */
+  void Ops::Push(string name, const std::vector<float>& value)
+  {
+    read_vect_float[name] = value;
+  }
+
+
+  //! Stores the value of an entry.
+  /*!
+    \param[in] name the name of the entry.
+    \param[in] value the value of the entry.
+  */
+  void Ops::Push(string name, const std::vector<double>& value)
+  {
+    read_vect_double[name] = value;
+  }
+
+
+  //! Stores the value of an entry.
+  /*!
+    \param[in] name the name of the entry.
+    \param[in] value the value of the entry.
+  */
+  void Ops::Push(string name, const std::vector<string>& value)
+  {
+    read_vect_string[name] = value;
+  }
+
+
+  //! Pushes all keys of a map into a vector.
+  /*!
+    \param[in] input the map whose keys should be pushed.
+    \param[in,out] vect the vector to which the map keys are pushed back.
+  */
+  template<class TK, class T>
+  void Ops::AppendKey(const std::map<TK, T>& input, std::vector<TK>& vect)
+  {
+    typename std::map<TK, T>::const_iterator i;
+    for (i = input.begin(); i != input.end(); i++)
+      vect.push_back(i->first);
   }
 
 

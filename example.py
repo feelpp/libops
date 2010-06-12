@@ -59,3 +59,7 @@ print "Call to function \"sum\":", ops.ApplyInt("sum", 1, 2, 3)
 # and 'TypeOut' is the type of the returned values.
 print "Call to function \"sum_product\":", \
     ops.ApplyDoubleDouble("sum_product", [1., 2.5, 3.])
+
+### Saving the configuration
+
+ops.WriteLuaDefinition("what_was_read.lua")

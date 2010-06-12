@@ -82,5 +82,11 @@ int main(int argc, char *argv[])
   cout << "Call to function \"sum_product\": " << out[0]
        << ", " << out[1] << endl;
 
+  /*** Saving the configuration ***/
+
+  // All variables, except functions, that were read can be written in a Lua
+  // file.
+  ops.WriteLuaDefinition("what_was_read.lua");
+
   return 0;
 }

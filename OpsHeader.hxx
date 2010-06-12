@@ -43,6 +43,8 @@ extern "C"
 #include <algorithm>
 #include <string>
 #include <sstream>
+#include <fstream>
+#include <map>
 
 using std::string;
 
