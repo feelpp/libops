@@ -36,7 +36,9 @@ extern "C"
 #define OPS_WITH_ABORT
 #endif
 
+#ifndef DISP
 #define DISP(x) std::cout << #x ": " << x << std::endl
+#endif
 
 #include <iostream>
 #include <vector>
