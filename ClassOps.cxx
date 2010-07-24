@@ -859,7 +859,7 @@ namespace Ops
 
         // Checks whether a new table is introduced. In this case, it should
         // be declared first, with "name = {}".
-        if (name->find(".") != string::npos)
+        if (name->find_first_of(".[") != string::npos)
           {
             string::size_type i = 0;
             string::size_type min_length
@@ -868,7 +868,7 @@ namespace Ops
             // coincide.
             while (i < min_length && previous_name[i] == (*name)[i])
               i++;
-            while ((i = name->find(".", i)) != string::npos)
+            while ((i = name->find_first_of(".[", i)) != string::npos)
               output += name->substr(0, i++) + " = {}\n";
           }
 
