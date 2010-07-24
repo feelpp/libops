@@ -697,6 +697,57 @@ namespace Ops
   }
 
 
+  //! Updates the values of all read variables.
+  /*! After a variable is read, it can be modified with calls to 'DoFile' or
+    'DoString'. For 'LuaDefinition' and 'WriteLuaDefinition' to use the
+    updated value, this method should be called. It will read all variables
+    again.
+  */
+  void Ops::UpdateLuaDefinition()
+  {
+    string prefix = prefix_;
+
+    for (std::map<string, bool>::iterator i = read_bool.begin();
+         i != read_bool.end(); i++)
+      Get(i->first, "", i->second);
+    for (std::map<string, int>::iterator i = read_int.begin();
+         i != read_int.end(); i++)
+      Get(i->first, "", i->second);
+    for (std::map<string, float>::iterator i = read_float.begin();
+         i != read_float.end(); i++)
+      Get(i->first, "", i->second);
+    for (std::map<string, double>::iterator i = read_double.begin();
+         i != read_double.end(); i++)
+      Get(i->first, "", i->second);
+    for (std::map<string, string>::iterator i = read_string.begin();
+         i != read_string.end(); i++)
+      Get(i->first, "", i->second);
+
+    for (std::map<string, std::vector<bool> >::iterator
+           i = read_vect_bool.begin();
+         i != read_vect_bool.end(); i++)
+      Get(i->first, "", i->second);
+    for (std::map<string, std::vector<int> >::iterator
+           i = read_vect_int.begin();
+         i != read_vect_int.end(); i++)
+      Get(i->first, "", i->second);
+    for (std::map<string, std::vector<float> >::iterator
+           i = read_vect_float.begin();
+         i != read_vect_float.end(); i++)
+      Get(i->first, "", i->second);
+    for (std::map<string, std::vector<double> >::iterator
+           i = read_vect_double.begin();
+         i != read_vect_double.end(); i++)
+      Get(i->first, "", i->second);
+    for (std::map<string, std::vector<string> >::iterator
+           i = read_vect_string.begin();
+         i != read_vect_string.end(); i++)
+      Get(i->first, "", i->second);
+
+    prefix_ = prefix;
+  }
+
+
   //! Returns a Lua line that defines an entry already read.
   /*! If the entry was not already read, an exception is thrown.
     \param[in] name name of the entry.

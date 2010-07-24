@@ -120,6 +120,7 @@ namespace Ops
     void SetPrefix(string prefix);
     void ClearPrefix();
     std::vector<string> GetReadEntryList();
+    void UpdateLuaDefinition();
     string LuaDefinition(string name);
     string LuaDefinition();
     void WriteLuaDefinition(string file_name);
