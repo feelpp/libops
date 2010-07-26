@@ -60,8 +60,8 @@ namespace Ops
     ~Ops();
 
     // Main methods.
-    void Open(string file_path);
-    void Reload();
+    void Open(string file_path, bool close_state = true);
+    void Reload(bool close_state = true);
     void Close();
     template<class TD, class T>
     void

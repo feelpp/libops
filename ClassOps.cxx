@@ -32,11 +32,25 @@ namespace Ops
 
 
   //! Default constructor.
-  /*! Nothing is performed. The Lua state is set to NULL.
+  /*! Nothing is performed. A Lua state is opened.
    */
-  Ops::Ops():
-    state_(NULL)
+  Ops::Ops()
   {
+    state_ = lua_open();
+    luaL_openlibs(state_);
+
+    // Defines 'ops_in' for the user. It checks whether an element is in a
+    // table.
+    string code = "function ops_in(v, table)\
+    for _, value in ipairs(table) do        \
+        if v == value then                  \
+            return true                     \
+        end                                 \
+    end                                     \
+    return false                            \
+    end";
+    if (luaL_dostring(state_, code.c_str()))
+      Error("Ops()", lua_tostring(state_, -1));
   }
 
 
@@ -70,37 +84,44 @@ namespace Ops
   /*! The previous configuration file (if any) is closed. The prefix is
     cleared.
     \param[in] file_path path to the configuration file.
+    \param[in] close_state should the Lua state be closed?
   */
-  void Ops::Open(string file_path)
+  void Ops::Open(string file_path, bool close_state)
   {
-    Close();
+    if (close_state)
+      {
+        Close();
+        state_ = lua_open();
+        luaL_openlibs(state_);
+        // Defines 'ops_in' for the user. It checks whether an element is in a
+        // table.
+        string code = "function ops_in(v, table)\
+        for _, value in ipairs(table) do        \
+            if v == value then                  \
+                return true                     \
+            end                                 \
+        end                                     \
+        return false                            \
+        end";
+        if (luaL_dostring(state_, code.c_str()))
+          Error("Open(string, bool)", lua_tostring(state_, -1));
+      }
+
     ClearPrefix();
     file_path_ = file_path;
-    state_ = lua_open();
-    luaL_openlibs(state_);
     if (luaL_dofile(state_, file_path_.c_str()))
-      Error("Open(string)", lua_tostring(state_, -1));
-
-    // Defines 'ops_in' for the user. It checks whether an element is in a
-    // table.
-    string code = "function ops_in(v, table)\
-    for _, value in ipairs(table) do        \
-        if v == value then                  \
-            return true                     \
-        end                                 \
-    end                                     \
-    return false                            \
-    end";
-    if (luaL_dostring(state_, code.c_str()))
-      Error("Open(string)", lua_tostring(state_, -1));
+      Error("Open(string, bool)", lua_tostring(state_, -1));
   }
 
 
   //! Reloads the current configuration file.
-  /*! The configuration file is closed and reopened. */
-  void Ops::Reload()
+  /*! The configuration file is closed and reopened.
+    \param[in] close_state should the Lua state be closed before reloading the
+    file?
+  */
+  void Ops::Reload(bool close_state)
   {
-    Open(file_path_);
+    Open(file_path_, close_state);
   }
 
 
