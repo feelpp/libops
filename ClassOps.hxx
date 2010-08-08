@@ -162,7 +162,7 @@ namespace Ops
     void Push(string name, const std::vector<string>& value);
     template<class TK, class T>
     void AppendKey(const std::map<TK, T>& input, std::vector<TK>& vect);
- };
+  };
 
 }
 
