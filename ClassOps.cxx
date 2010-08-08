@@ -458,6 +458,36 @@ namespace Ops
   }
 
 
+  //! Checks that a certain value satisfies a constraint.
+  /*!
+    \param[in] value value whose consistency with \a constraint is to be
+    checked.
+    \param[in] constraint the constraint to be satisfied.
+    \return True if the constraint is satisfied, false otherwise.
+  */
+  bool Ops::CheckConstraintOnValue(string value, string constraint)
+  {
+    if (constraint == "")
+      return true;
+
+    string code;
+    code = "function ops_check_constraint(v)\nreturn " + constraint \
+      + "\nend\nops_result = ops_check_constraint(" + value + ")";
+    if (luaL_dostring(state_, code.c_str()))
+      Error("CheckConstraintOnValue",
+            "While checking the value \"" + value + "\":\n  "
+            + string(lua_tostring(state_, -1)));
+
+    PutOnStack("ops_result");
+    if (!lua_isboolean(state_, -1))
+      throw Error("CheckConstraint",
+                  "For value \"" + value + "\", the following constraint did "
+                  "not return a Boolean:\n" + Constraint(constraint));
+
+    return static_cast<bool>(lua_toboolean(state_, -1));
+  }
+
+
   //! Puts \a name on top of the stack.
   /*! If \a name is a simple variable, it calls 'lua_getglobal' once. But if
     \a name is encapsulated in a table, this method iterates until it finds

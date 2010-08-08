@@ -93,6 +93,7 @@ namespace Ops
             const T& arg3, const T& arg4);
     std::vector<string> GetEntryList(string name = "");
     bool CheckConstraint(string name, string constraint);
+    bool CheckConstraintOnValue(string value, string constraint);
     void PutOnStack(string name);
     bool Exists(string name);
     void PushOnStack(bool value);
