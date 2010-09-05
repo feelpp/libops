@@ -970,6 +970,10 @@ namespace Ops
             // coincide.
             while (i < min_length && previous_name[i] == (*name)[i])
               i++;
+            if (i < min_length
+                && (previous_name[i] == '.' || previous_name[i] == '[')
+                && ((*name)[i] == '.' || (*name)[i] == '['))
+              i++;
             while ((i = name->find_first_of(".[", i)) != string::npos)
               output += name->substr(0, i++) + " = {}\n";
           }
