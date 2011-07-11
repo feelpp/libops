@@ -534,7 +534,9 @@ namespace Ops
   bool Ops::Exists(string name)
   {
     PutOnStack(Name(name));
-    return !lua_isnil(state_, -1);
+    bool exists = !lua_isnil(state_, -1);
+    ClearStack();
+    return exists;
   }
 
 
