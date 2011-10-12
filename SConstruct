@@ -16,8 +16,9 @@
 # along with Ops. If not, see http://www.gnu.org/licenses/.
 
 
-import distutils.sysconfig
-env = Environment(SWIGFLAGS = ['-Wall', '-c++', '-python'],
+import distutils.sysconfig, os
+env = Environment(ENV = os.environ,
+                  SWIGFLAGS = ['-Wall', '-c++', '-python'],
                   CPPPATH = [distutils.sysconfig.get_python_inc(),
                              "/usr/include/lua5.1/"],
                   SHLIBPREFIX = "")
@@ -27,4 +28,9 @@ if not conf.CheckLib("lua5.1"):
     conf.CheckLib("lua")
 
 env.Append(CPPFLAGS = "-DOPS_WITH_EXCEPTION")
-env.SharedLibrary('_ops.so', ['Ops.cpp', 'ops.i'])
+if env['PLATFORM'] == 'win32':
+	env.Append(SHLIBSUFFIX = ".pyd")
+	env.Replace(LINK = "LINK")
+	env.SharedLibrary('_ops', ['Ops.cpp', 'ops.i'])
+else:
+    env.SharedLibrary('_ops.so', ['Ops.cpp', 'ops.i'])
