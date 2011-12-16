@@ -555,6 +555,20 @@ namespace Ops
   }
 
 
+  //! Checks whether \a name is a table.
+  /*! On exit, the value of the entry (if it exists) is on the stack.
+    \param[in] name the name of the entry whose type is checked.
+    \return True if the entry is a table, false otherwise.
+    \note The prefix is prepended to \a name. If \a name does not exist, an
+    exception is raised.
+  */
+  bool Ops::IsTable(string name)
+  {
+    PutOnStack(Name(name));
+    return lua_istable(state_, -1);
+  }
+
+
   //! Checks whether \a name is a function.
   /*! On exit, the value of the entry (if it exists) is on the stack.
     \param[in] name the name of the entry whose type is checked.

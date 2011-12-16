@@ -105,6 +105,7 @@ namespace Ops
     void PushOnStack(const std::vector<T>& v);
     template<class T>
     bool Is(string name);
+    bool IsTable(string name);
     bool IsFunction(string name);
     void ClearStack();
 
