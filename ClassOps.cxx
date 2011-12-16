@@ -50,7 +50,7 @@ namespace Ops
     return false                            \
     end";
     if (luaL_dostring(state_, code.c_str()))
-      Error("Ops()", lua_tostring(state_, -1));
+      throw Error("Ops()", lua_tostring(state_, -1));
   }
 
 
@@ -104,13 +104,13 @@ namespace Ops
         return false                            \
         end";
         if (luaL_dostring(state_, code.c_str()))
-          Error("Open(string, bool)", lua_tostring(state_, -1));
+          throw Error("Open(string, bool)", lua_tostring(state_, -1));
       }
 
     ClearPrefix();
     file_path_ = file_path;
     if (luaL_dofile(state_, file_path_.c_str()))
-      Error("Open(string, bool)", lua_tostring(state_, -1));
+      throw Error("Open(string, bool)", lua_tostring(state_, -1));
   }
 
 
@@ -444,9 +444,9 @@ namespace Ops
     code = "function ops_check_constraint(v)\nreturn " + constraint \
       + "\nend\nops_result = ops_check_constraint(" + Name(name) + ")";
     if (luaL_dostring(state_, code.c_str()))
-      Error("CheckConstraint",
-            "While checking " + Entry(name) + ":\n  "
-            + string(lua_tostring(state_, -1)));
+      throw Error("CheckConstraint",
+                  "While checking " + Entry(name) + ":\n  "
+                  + string(lua_tostring(state_, -1)));
 
     PutOnStack("ops_result");
     if (!lua_isboolean(state_, -1))
@@ -474,9 +474,9 @@ namespace Ops
     code = "function ops_check_constraint(v)\nreturn " + constraint \
       + "\nend\nops_result = ops_check_constraint(" + value + ")";
     if (luaL_dostring(state_, code.c_str()))
-      Error("CheckConstraintOnValue",
-            "While checking the value \"" + value + "\":\n  "
-            + string(lua_tostring(state_, -1)));
+      throw Error("CheckConstraintOnValue",
+                  "While checking the value \"" + value + "\":\n  "
+                  + string(lua_tostring(state_, -1)));
 
     PutOnStack("ops_result");
     if (!lua_isboolean(state_, -1))
@@ -646,7 +646,7 @@ namespace Ops
   void Ops::DoFile(string file_path)
   {
     if (luaL_dofile(state_, file_path.c_str()))
-      Error("DoFile(string)", lua_tostring(state_, -1));
+      throw Error("DoFile(string)", lua_tostring(state_, -1));
   }
 
 
@@ -657,7 +657,7 @@ namespace Ops
   void Ops::DoString(string expression)
   {
     if (luaL_dostring(state_, expression.c_str()))
-      Error("DoString(string)", lua_tostring(state_, -1));
+      throw Error("DoString(string)", lua_tostring(state_, -1));
   }
 
 
