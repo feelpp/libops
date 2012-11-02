@@ -24,6 +24,10 @@ env = Environment(ENV = os.environ,
                   SHLIBPREFIX = "")
 
 conf = Configure(env)
+# Link to the appropriate version of Python.
+for python_version in ["2.7", "2.6", "2.5", ""]:
+    if conf.CheckLib("python" + python_version):
+        break
 if not conf.CheckLib("lua5.1"):
     conf.CheckLib("lua")
 
