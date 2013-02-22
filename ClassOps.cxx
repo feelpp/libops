@@ -257,9 +257,9 @@ namespace Ops
 
     n = lua_gettop(state_) - n + 1 + int(in.size());
 
-    out.resize(n);
+    out.resize(std::size_t(n));
     for (int i = 0; i < n; i++)
-      if (!Convert(i - n, out[i]))
+      if (!Convert(i - n, out[std::size_t(i)]))
         {
           std::ostringstream str;
           str << i;
@@ -640,7 +640,7 @@ namespace Ops
   template<class T>
   void Ops::PushOnStack(const std::vector<T>& v)
   {
-    for (int i = 0; i < int(v.size()); i++)
+    for (std::size_t i = 0; i < v.size(); i++)
       PushOnStack(v[i]);
   }
 
@@ -869,17 +869,22 @@ namespace Ops
     if (i_vect_bool != read_vect_bool.end())
       {
         output << name << " = {";
-        int size = i_vect_bool->second.size();
-        for (int i = 0; i < size - 1; i++)
-          if (i_vect_bool->second[i])
-            output << "true, ";
-          else
-            output << "false, ";
+        std::size_t size = i_vect_bool->second.size();
+
         if (size != 0)
-          if (i_vect_bool->second[size - 1])
-            output << "true";
-          else
-            output << "false";
+          {
+            for (std::size_t i = 0; i < size - 1; i++)
+              if (i_vect_bool->second[i])
+                output << "true, ";
+              else
+                output << "false, ";
+
+            if (i_vect_bool->second[size - 1])
+              output << "true";
+            else
+              output << "false";
+          }
+
         output << "}";
       }
     if (!output.str().empty())
@@ -890,11 +895,14 @@ namespace Ops
     if (i_vect_int != read_vect_int.end())
       {
         output << name << " = {";
-        int size = i_vect_int->second.size();
-        for (int i = 0; i < size - 1; i++)
-          output << i_vect_int->second[i] << ", ";
+        std::size_t size = i_vect_int->second.size();
+
         if (size != 0)
-          output << i_vect_int->second[size - 1];
+          {
+            for (std::size_t i = 0; i < size - 1; i++)
+              output << i_vect_int->second[i] << ", ";
+            output << i_vect_int->second[size - 1];
+          }
         output << "}";
       }
     if (!output.str().empty())
@@ -905,11 +913,14 @@ namespace Ops
     if (i_vect_float != read_vect_float.end())
       {
         output << name << " = {";
-        int size = i_vect_float->second.size();
-        for (int i = 0; i < size - 1; i++)
-          output << i_vect_float->second[i] << ", ";
+        std::size_t size = i_vect_float->second.size();
+
         if (size != 0)
-          output << i_vect_float->second[size - 1];
+          {
+            for (std::size_t i = 0; i < size - 1; i++)
+              output << i_vect_float->second[i] << ", ";
+            output << i_vect_float->second[size - 1];
+          }
         output << "}";
       }
     if (!output.str().empty())
@@ -920,11 +931,14 @@ namespace Ops
     if (i_vect_double != read_vect_double.end())
       {
         output << name << " = {";
-        int size = i_vect_double->second.size();
-        for (int i = 0; i < size - 1; i++)
-          output << i_vect_double->second[i] << ", ";
+        std::size_t size = i_vect_double->second.size();
+
         if (size != 0)
-          output << i_vect_double->second[size - 1];
+          {
+            for (std::size_t i = 0; i < size - 1; i++)
+              output << i_vect_double->second[i] << ", ";
+            output << i_vect_double->second[size - 1];
+          }
         output << "}";
       }
     if (!output.str().empty())
@@ -935,11 +949,14 @@ namespace Ops
     if (i_vect_string != read_vect_string.end())
       {
         output << name << " = {";
-        int size = i_vect_string->second.size();
-        for (int i = 0; i < size - 1; i++)
-          output << "\"" << i_vect_string->second[i] << "\", ";
+        std::size_t size = i_vect_string->second.size();
+
         if (size != 0)
-          output << "\"" << i_vect_string->second[size - 1] << "\"";
+          {
+            for (std::size_t i = 0; i < size - 1; i++)
+              output << "\"" << i_vect_string->second[i] << "\", ";
+            output << "\"" << i_vect_string->second[size - 1] << "\"";
+          }
         output << "}";
       }
     if (!output.str().empty())
@@ -1283,7 +1300,7 @@ namespace Ops
         lua_pop(state_, 3);
       }
 
-    for (int i = 0; i < int(key_list.size()); i++)
+    for (std::size_t i = 0; i < key_list.size(); i++)
       if (!CheckConstraint(name + "[" + key_list[i] + "]", constraint))
         throw Error("SetValue",
                     "The " + Entry(name + "[" + key_list[i] + "]")
@@ -1402,7 +1419,7 @@ namespace Ops
             }
           string index_str = name.substr(end + 1, end_index - end - 1);
           // Checks whether 'index_str' is an integer.
-          for (int i = 0; i < int(index_str.size()); i++)
+          for (std::size_t i = 0; i < index_str.size(); i++)
             if (!isdigit(index_str[i]))
               {
                 lua_pushnil(state_);
