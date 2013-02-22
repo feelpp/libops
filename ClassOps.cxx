@@ -127,7 +127,6 @@ namespace Ops
 
   //! Closes the configuration file (if any is open).
   /*! Destroys the Lua state object. The prefix is cleared.
-    \param[in] file_path path to the configuration file.
   */
   void Ops::Close()
   {
