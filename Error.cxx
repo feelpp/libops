@@ -31,7 +31,7 @@ namespace Ops
     \param[in] function function in which the error occurred.
     \param[in] comment comment associated with the error.
   */
-  Error::Error(string function = "", string comment = ""):
+  Error::Error(string function, string comment):
     function_(function), comment_(comment)
   {
 #ifdef OPS_WITH_ABORT

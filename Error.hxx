@@ -39,7 +39,7 @@ namespace Ops
 
   public:
     // Constructor.
-    Error(string function, string comment);
+    Error(string function = "", string comment = "");
 
     // Destructor.
     virtual ~Error();
