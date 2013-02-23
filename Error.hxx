@@ -44,7 +44,7 @@ namespace Ops
     // Destructor.
     virtual ~Error();
 
-    virtual string What();
+    virtual string What() const;
     void CoutWhat();
   };
 

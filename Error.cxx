@@ -50,7 +50,7 @@ namespace Ops
   //! Delivers information about the error.
   /*! \return The available information: the function and/or the comment.
    */
-  string Error::What()
+  string Error::What() const
   {
     string message;
     if (!function_.empty())
