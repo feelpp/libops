@@ -150,7 +150,7 @@ namespace Ops
     template<class T>
     bool IsParam(string name, T& value);
     template<class T>
-    bool IsParam(string name, std::vector<T>& value);
+    bool IsParam(string name, std::vector<T>&);
     void Push(string name, const bool& value);
     void Push(string name, const int& value);
     void Push(string name, const float& value);
