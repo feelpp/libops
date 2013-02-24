@@ -1477,7 +1477,6 @@ namespace Ops
   //! Checks whether \a name is a table of 'T'.
   /*!
     \param[in] name the name of the entry whose type is checked.
-    \param[in] value anything: it is used to determine the type.
     \return True if the entry is a table of 'T', false otherwise.
     \note The prefix is prepended to \a name. If \a name does not exist, an
     exception is raised.
