@@ -8,7 +8,6 @@ using namespace std;
 int main(int argc, char *argv[])
 {
   int integer;
-  double number;
   string str;
   vector<string> str_vector;
   vector<int> int_vector;
