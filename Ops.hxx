@@ -22,6 +22,7 @@
 #include "OpsHeader.hxx"
 
 #include "Error.cxx"
+#include "ClassOps.txx"
 #include "ClassOps.cxx"
 
 

@@ -18,7 +18,7 @@
 
 #ifndef OPS_FILE_ERROR_CXX
 
-
+#include "OpsHeader.hxx"
 #include "Error.hxx"
 
 
@@ -38,12 +38,6 @@ namespace Ops
     this->CoutWhat();
     abort();
 #endif
-  }
-
-
-  //! Destructor.
-  Error::~Error()
-  {
   }
 
 

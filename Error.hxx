@@ -41,10 +41,9 @@ namespace Ops
     // Constructor.
     Error(string function = "", string comment = "");
 
-    // Destructor.
-    virtual ~Error();
 
-    virtual string What() const;
+
+    string What() const;
     void CoutWhat();
   };
 

@@ -23,6 +23,8 @@
 #ifndef OPS_FILE_OPS_CPP
 
 #include "Ops.hxx"
+#include "ClassOps.cxx"
+#include "Error.cxx"
 
 #define OPS_INSTANTIATE_ELEMENT(type)                           \
   template type Ops::Get(string);                               \
