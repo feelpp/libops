@@ -433,7 +433,7 @@ namespace Ops
     exception is raised.
   */
   template<class T>
-  bool Ops::IsParam(string name, std::vector<T>&)
+  bool Ops::IsParam(string name, std::vector<T>& value)
   {
     PutOnStack(Name(name));
 
