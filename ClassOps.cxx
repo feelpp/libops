@@ -37,7 +37,7 @@ namespace Ops
    */
   Ops::Ops()
   {
-    state_ = lua_open();
+    state_ = luaL_newstate();
     luaL_openlibs(state_);
 
     // Defines 'ops_in' for the user. It checks whether an element is in a
@@ -92,7 +92,7 @@ namespace Ops
     if (close_state)
       {
         Close();
-        state_ = lua_open();
+        state_ = luaL_newstate();
         luaL_openlibs(state_);
         // Defines 'ops_in' for the user. It checks whether an element is in a
         // table.
