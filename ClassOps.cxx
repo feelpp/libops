@@ -267,7 +267,11 @@ namespace Ops
   {
     if (name.empty())
       {
-        lua_pushvalue(state_, LUA_GLOBALSINDEX);
+#if LUA_VERSION_NUM > 501
+		    lua_pushglobaltable(state_);
+#else
+		    lua_pushvalue(state_,LUA_GLOBALSINDEX);
+#endif
         return;
       }
 
