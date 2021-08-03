@@ -46,11 +46,7 @@ option(BUILD_SHARED_LIBS "Enable compilation of shared libraries" ON)
 option(ENABLE_TESTING "Enable Test Builds" ON)
 
 
-if(ENABLE_TESTING)
-  enable_testing()
-#  message("Building Tests. Be sure to check out test/constexpr_tests for constexpr testing")
-#  add_subdirectory(test)
-endif()
+
 
 include(GNUInstallDirs)
 
@@ -88,3 +84,7 @@ add_executable(opsexample ${CMAKE_CURRENT_SOURCE_DIR}/example.cpp)
 target_link_libraries(opsexample ops)
 
 
+if(ENABLE_TESTING)
+  enable_testing()
+  add_test(NAME opsexample COMMAND ${CMAKE_CURRENT_BINARY_DIR}/opsexample WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}) 
+endif()
