@@ -18,10 +18,6 @@
 
 #ifndef OPS_FILE_CLASSOPS_TXX
 
-
-#include "ClassOps.hxx"
-
-
 namespace Ops
 {
 
@@ -36,7 +32,7 @@ namespace Ops
   */
   template<class TD, class T>
   void
-  Ops::Set(string name, string constraint, const TD& default_value, T& value)
+  Ops::Set(std::string name, std::string constraint, const TD& default_value, T& value)
   {
     SetValue(name, constraint, default_value, true, value);
   }
@@ -49,7 +45,7 @@ namespace Ops
     \param[out] value value of the entry.
   */
   template<class T>
-  void Ops::Set(string name, string constraint, T& value)
+  void Ops::Set(std::string name, std::string constraint, T& value)
   {
     SetValue(name, constraint, value, false, value);
   }
@@ -61,7 +57,7 @@ namespace Ops
     \param[out] value value of the entry.
   */
   template <class T>
-  void Ops::Set(string name, T& value)
+  void Ops::Set(std::string name, T& value)
   {
     SetValue(name, "", value, false, value);
   }
@@ -76,7 +72,7 @@ namespace Ops
     \return The value of the entry.
   */
   template<class T>
-  T Ops::Get(string name, string constraint, const T& default_value)
+  T Ops::Get(std::string name, std::string constraint, const T& default_value)
   {
     T value;
     SetValue(name, constraint, default_value, true, value);
@@ -91,7 +87,7 @@ namespace Ops
     \return The value of the entry.
   */
   template<class T>
-  T Ops::Get(string name, string constraint)
+  T Ops::Get(std::string name, std::string constraint)
   {
     T value;
     SetValue(name, constraint, value, false, value);
@@ -105,7 +101,7 @@ namespace Ops
     \return The value of the entry.
   */
   template <class T>
-  T Ops::Get(string name)
+  T Ops::Get(std::string name)
   {
     T value;
     SetValue(name, "", value, false, value);
@@ -121,7 +117,7 @@ namespace Ops
     \note The prefix is prepended to \a name.
   */
   template<class Tin, class Tout>
-  void Ops::Apply(string name, const std::vector<Tin>& in,
+  void Ops::Apply(std::string name, const std::vector<Tin>& in,
                   std::vector<Tout>& out)
   {
     PutOnStack(Name(name));
@@ -130,7 +126,7 @@ namespace Ops
     int n = lua_gettop(state_);
 
     if (lua_pcall(state_, int(in.size()), LUA_MULTRET, 0) != 0)
-      throw Error("Apply(string, vector, vector&)",
+      throw Error("Apply(std::string, vector, vector&)",
                   "While calling " + Function(name) + ":\n  "
                   + lua_tostring(state_, -1));
 
@@ -142,7 +138,7 @@ namespace Ops
         {
           std::ostringstream str;
           str << i;
-          throw Error("Apply(string, vector, vector&)",
+          throw Error("Apply(std::string, vector, vector&)",
                       "The returned value #" + str.str() + " of \""
                       + Name(name) + "\" is not of correct type.");
         }
@@ -159,7 +155,7 @@ namespace Ops
     \note The prefix is prepended to \a name.
   */
   template<class T>
-  T Ops::Apply(string name, const T& arg0)
+  T Ops::Apply(std::string name, const T& arg0)
   {
     std::vector<T> in, out;
     in.push_back(arg0);
@@ -177,7 +173,7 @@ namespace Ops
     \note The prefix is prepended to \a name.
   */
   template<class T>
-  T Ops::Apply(string name, const T& arg0, const T& arg1)
+  T Ops::Apply(std::string name, const T& arg0, const T& arg1)
   {
     std::vector<T> in, out;
     in.push_back(arg0);
@@ -197,7 +193,7 @@ namespace Ops
     \note The prefix is prepended to \a name.
   */
   template<class T>
-  T Ops::Apply(string name, const T& arg0, const T& arg1, const T& arg2)
+  T Ops::Apply(std::string name, const T& arg0, const T& arg1, const T& arg2)
   {
     std::vector<T> in, out;
     in.push_back(arg0);
@@ -219,7 +215,7 @@ namespace Ops
     \note The prefix is prepended to \a name.
   */
   template<class T>
-  T Ops::Apply(string name, const T& arg0, const T& arg1, const T& arg2,
+  T Ops::Apply(std::string name, const T& arg0, const T& arg1, const T& arg2,
                const T& arg3)
   {
     std::vector<T> in, out;
@@ -244,7 +240,7 @@ namespace Ops
     \note The prefix is prepended to \a name.
   */
   template<class T>
-  T Ops::Apply(string name, const T& arg0, const T& arg1, const T& arg2,
+  T Ops::Apply(std::string name, const T& arg0, const T& arg1, const T& arg2,
                const T& arg3, const T& arg4)
   {
     std::vector<T> in, out;
@@ -266,7 +262,7 @@ namespace Ops
     exception is raised.
   */
   template<class T>
-  bool Ops::Is(string name)
+  bool Ops::Is(std::string name)
   {
     T value;
     return IsParam(name, value);
@@ -302,7 +298,7 @@ namespace Ops
     \note The default value may not satisfy the constraint.
   */
   template<class TD, class T>
-  void Ops::SetValue(string name, string constraint,
+  void Ops::SetValue(std::string name, std::string constraint,
                      const TD& default_value, bool with_default,
                      T& value)
   {
@@ -343,7 +339,7 @@ namespace Ops
     \note The default value may not satisfy the constraint.
   */
   template<class T>
-  void Ops::SetValue(string name, string constraint,
+  void Ops::SetValue(std::string name, std::string constraint,
                      const std::vector<T>& default_value, bool with_default,
                      std::vector<T>& value)
   {
@@ -366,8 +362,8 @@ namespace Ops
 
     std::vector<T> element_list;
     T element;
-    std::vector<string> key_list;
-    string key;
+    std::vector<std::string> key_list;
+    std::string key;
     // Now loops over all elements of the table.
     lua_pushnil(state_);
     while (lua_next(state_, -2) != 0)
@@ -412,12 +408,12 @@ namespace Ops
     exception is raised.
   */
   template<class T>
-  bool Ops::IsParam(string name, T& value)
+  bool Ops::IsParam(std::string name, T& value)
   {
     PutOnStack(Name(name));
 
     if (lua_isnil(state_, -1))
-      throw Error("Is(string)",
+      throw Error("Is(std::string)",
                   "The " + Entry(name) + " was not found.");
 
     return Convert(-1, value);
@@ -433,7 +429,7 @@ namespace Ops
     exception is raised.
   */
   template<class T>
-  bool Ops::IsParam(string name, std::vector<T>& value)
+  bool Ops::IsParam(std::string name, std::vector<T>& value)
   {
     PutOnStack(Name(name));
 

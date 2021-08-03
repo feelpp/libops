@@ -17,13 +17,10 @@
 
 
 #ifndef OPS_FILE_OPS_HXX
+#include <OpsHeader.hxx>
 
-
-#include "OpsHeader.hxx"
-
-#include "Error.cxx"
-#include "ClassOps.txx"
-#include "ClassOps.cxx"
+#include <Error.hxx>
+#include <ClassOps.hxx>
 
 
 #define OPS_FILE_OPS_HXX

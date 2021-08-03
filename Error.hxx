@@ -18,6 +18,7 @@
 
 #ifndef OPS_FILE_ERROR_HXX
 
+#include <string>
 
 #ifdef OPS_WITH_ABORT
 #include <cstdlib>
@@ -33,17 +34,17 @@ namespace Ops
   {
   protected:
     //! Name of the function in which the error occurred.
-    string function_;
+    std::string function_;
     //! A comment about the error.
-    string comment_;
+    std::string comment_;
 
   public:
     // Constructor.
-    Error(string function = "", string comment = "");
+    Error(std::string function = "", std::string comment = "");
 
 
 
-    string What() const;
+    [[nodiscard]] std::string What() const;
     void CoutWhat();
   };
 

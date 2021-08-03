@@ -48,7 +48,6 @@ extern "C"
 #include <fstream>
 #include <map>
 
-using std::string;
 
 #include "Error.hxx"
 #include "ClassOps.hxx"

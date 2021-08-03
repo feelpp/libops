@@ -31,7 +31,7 @@ namespace Ops
     \param[in] function function in which the error occurred.
     \param[in] comment comment associated with the error.
   */
-  Error::Error(string function, string comment):
+  Error::Error(std::string function, std::string comment):
     function_(function), comment_(comment)
   {
 #ifdef OPS_WITH_ABORT
@@ -44,9 +44,9 @@ namespace Ops
   //! Delivers information about the error.
   /*! \return The available information: the function and/or the comment.
    */
-  string Error::What() const
+  std::string Error::What() const
   {
-    string message;
+    std::string message;
     if (!function_.empty())
       message += "Error in Ops::" + function_ + ".\n";
     if (!comment_.empty())

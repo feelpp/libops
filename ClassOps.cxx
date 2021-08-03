@@ -42,7 +42,7 @@ namespace Ops
 
     // Defines 'ops_in' for the user. It checks whether an element is in a
     // table.
-    string code = "function ops_in(v, table)\
+    std::string code = "function ops_in(v, table)\
     for _, value in ipairs(table) do        \
         if v == value then                  \
             return true                     \
@@ -60,7 +60,7 @@ namespace Ops
     during this evaluation.
     \param[in] file_path path to the configuration file.
   */
-  Ops::Ops(string file_path):
+  Ops::Ops(std::string file_path):
     file_path_(file_path), state_(NULL)
   {
     Open(file_path_);
@@ -87,7 +87,7 @@ namespace Ops
     \param[in] file_path path to the configuration file.
     \param[in] close_state should the Lua state be closed?
   */
-  void Ops::Open(string file_path, bool close_state)
+  void Ops::Open(std::string file_path, bool close_state)
   {
     if (close_state)
       {
@@ -96,7 +96,7 @@ namespace Ops
         luaL_openlibs(state_);
         // Defines 'ops_in' for the user. It checks whether an element is in a
         // table.
-        string code = "function ops_in(v, table)\
+        std::string code = "function ops_in(v, table)\
         for _, value in ipairs(table) do        \
             if v == value then                  \
                 return true                     \
@@ -105,13 +105,13 @@ namespace Ops
         return false                            \
         end";
         if (luaL_dostring(state_, code.c_str()))
-          throw Error("Open(string, bool)", lua_tostring(state_, -1));
+          throw Error("Open(std::string, bool)", lua_tostring(state_, -1));
       }
 
     ClearPrefix();
     file_path_ = file_path;
     if (luaL_dofile(state_, file_path_.c_str()))
-      throw Error("Open(string, bool)", lua_tostring(state_, -1));
+      throw Error("Open(std::string, bool)", lua_tostring(state_, -1));
   }
 
 
@@ -157,7 +157,7 @@ namespace Ops
     \a name does not exist or does not contain other entries, an exception is
     raised.
   */
-  std::vector<string> Ops::GetEntryList(string name)
+  std::vector<std::string> Ops::GetEntryList(std::string name)
   {
     PutOnStack(Name(name));
 
@@ -169,8 +169,8 @@ namespace Ops
       throw Error("GetEntryList",
                   "The " + Entry(name) + " does not contain other entries.");
 
-    std::vector<string> key_list;
-    string key;
+    std::vector<std::string> key_list;
+    std::string key;
     // Now loops over all elements of the table.
     lua_pushnil(state_);
     while (lua_next(state_, -2) != 0)
@@ -203,18 +203,18 @@ namespace Ops
     \param[in] constraint the constraint to be satisfied.
     \return True if the constraint is satisfied, false otherwise.
   */
-  bool Ops::CheckConstraint(string name, string constraint)
+  bool Ops::CheckConstraint(std::string name, std::string constraint)
   {
     if (constraint == "")
       return true;
 
-    string code;
+    std::string code;
     code = "function ops_check_constraint(v)\nreturn " + constraint \
       + "\nend\nops_result = ops_check_constraint(" + Name(name) + ")";
     if (luaL_dostring(state_, code.c_str()))
       throw Error("CheckConstraint",
                   "While checking " + Entry(name) + ":\n  "
-                  + string(lua_tostring(state_, -1)));
+                  + std::string(lua_tostring(state_, -1)));
 
     PutOnStack("ops_result");
     if (!lua_isboolean(state_, -1))
@@ -233,18 +233,18 @@ namespace Ops
     \param[in] constraint the constraint to be satisfied.
     \return True if the constraint is satisfied, false otherwise.
   */
-  bool Ops::CheckConstraintOnValue(string value, string constraint)
+  bool Ops::CheckConstraintOnValue(std::string value, std::string constraint)
   {
     if (constraint == "")
       return true;
 
-    string code;
+    std::string code;
     code = "function ops_check_constraint(v)\nreturn " + constraint \
       + "\nend\nops_result = ops_check_constraint(" + value + ")";
     if (luaL_dostring(state_, code.c_str()))
       throw Error("CheckConstraintOnValue",
                   "While checking the value \"" + value + "\":\n  "
-                  + string(lua_tostring(state_, -1)));
+                  + std::string(lua_tostring(state_, -1)));
 
     PutOnStack("ops_result");
     if (!lua_isboolean(state_, -1))
@@ -263,7 +263,7 @@ namespace Ops
     \param[in] name the name of the entry to be put on top of the stack.
     \note The prefix is not prepended to \a name.
   */
-  void Ops::PutOnStack(string name)
+  void Ops::PutOnStack(std::string name)
   {
     if (name.empty())
       {
@@ -282,7 +282,7 @@ namespace Ops
         lua_pushnil(state_);
         return;
       }
-    if (end == string::npos)
+    if (end == std::string::npos)
       {
         lua_getglobal(state_, name.c_str());
         return;
@@ -303,7 +303,7 @@ namespace Ops
     \return True if the entry exists, false otherwise.
     \note The prefix is prepended to \a name.
   */
-  bool Ops::Exists(string name)
+  bool Ops::Exists(std::string name)
   {
     PutOnStack(Name(name));
     bool exists = !lua_isnil(state_, -1);
@@ -319,7 +319,7 @@ namespace Ops
     \note The prefix is prepended to \a name. If \a name does not exist, an
     exception is raised.
   */
-  bool Ops::IsTable(string name)
+  bool Ops::IsTable(std::string name)
   {
     PutOnStack(Name(name));
     return lua_istable(state_, -1);
@@ -333,7 +333,7 @@ namespace Ops
     \note The prefix is prepended to \a name. If \a name does not exist, an
     exception is raised.
   */
-  bool Ops::IsFunction(string name)
+  bool Ops::IsFunction(std::string name)
   {
     PutOnStack(Name(name));
     return lua_isfunction(state_, -1);
@@ -384,7 +384,7 @@ namespace Ops
   /*!
     \param[in] value element to be pushed.
   */
-  void Ops::PushOnStack(string value)
+  void Ops::PushOnStack(std::string value)
   {
     lua_pushstring(state_, value.c_str());
   }
@@ -401,10 +401,10 @@ namespace Ops
   /*!
     \param[in] file_path path to the file to be processed.
   */
-  void Ops::DoFile(string file_path)
+  void Ops::DoFile(std::string file_path)
   {
     if (luaL_dofile(state_, file_path.c_str()))
-      throw Error("DoFile(string)", lua_tostring(state_, -1));
+      throw Error("DoFile(std::string)", lua_tostring(state_, -1));
   }
 
 
@@ -412,10 +412,10 @@ namespace Ops
   /*!
     \param[in] expression the Lua code to be evaluated.
   */
-  void Ops::DoString(string expression)
+  void Ops::DoString(std::string expression)
   {
     if (luaL_dostring(state_, expression.c_str()))
-      throw Error("DoString(string)", lua_tostring(state_, -1));
+      throw Error("DoString(std::string)", lua_tostring(state_, -1));
   }
 
 
@@ -428,7 +428,7 @@ namespace Ops
   /*!
     \return The path to the configuration file.
   */
-  string Ops::GetFilePath() const
+  std::string Ops::GetFilePath() const
   {
     return file_path_;
   }
@@ -458,7 +458,7 @@ namespace Ops
   /*!
     \return The current prefix.
   */
-  string Ops::GetPrefix() const
+  std::string Ops::GetPrefix() const
   {
     return prefix_;
   }
@@ -468,7 +468,7 @@ namespace Ops
   /*!
     \param[in] prefix the new prefix.
   */
-  void Ops::SetPrefix(string prefix)
+  void Ops::SetPrefix(std::string prefix)
   {
     prefix_ = prefix;
   }
@@ -486,9 +486,9 @@ namespace Ops
     \return The list of the entries that were read, except the functions. The
     names are sorted.
   */
-  std::vector<string> Ops::GetReadEntryList()
+  std::vector<std::string> Ops::GetReadEntryList()
   {
-    std::vector<string> name_list;
+    std::vector<std::string> name_list;
     AppendKey(read_bool, name_list);
     AppendKey(read_int, name_list);
     AppendKey(read_float, name_list);
@@ -516,41 +516,41 @@ namespace Ops
   */
   void Ops::UpdateLuaDefinition()
   {
-    string prefix = prefix_;
+    std::string prefix = prefix_;
 
-    for (std::map<string, bool>::iterator i = read_bool.begin();
+    for (std::map<std::string, bool>::iterator i = read_bool.begin();
          i != read_bool.end(); i++)
       Get(i->first, "", i->second);
-    for (std::map<string, int>::iterator i = read_int.begin();
+    for (std::map<std::string, int>::iterator i = read_int.begin();
          i != read_int.end(); i++)
       Get(i->first, "", i->second);
-    for (std::map<string, float>::iterator i = read_float.begin();
+    for (std::map<std::string, float>::iterator i = read_float.begin();
          i != read_float.end(); i++)
       Get(i->first, "", i->second);
-    for (std::map<string, double>::iterator i = read_double.begin();
+    for (std::map<std::string, double>::iterator i = read_double.begin();
          i != read_double.end(); i++)
       Get(i->first, "", i->second);
-    for (std::map<string, string>::iterator i = read_string.begin();
+    for (std::map<std::string, std::string>::iterator i = read_string.begin();
          i != read_string.end(); i++)
       Get(i->first, "", i->second);
 
-    for (std::map<string, std::vector<bool> >::iterator
+    for (std::map<std::string, std::vector<bool> >::iterator
            i = read_vect_bool.begin();
          i != read_vect_bool.end(); i++)
       Get(i->first, "", i->second);
-    for (std::map<string, std::vector<int> >::iterator
+    for (std::map<std::string, std::vector<int> >::iterator
            i = read_vect_int.begin();
          i != read_vect_int.end(); i++)
       Get(i->first, "", i->second);
-    for (std::map<string, std::vector<float> >::iterator
+    for (std::map<std::string, std::vector<float> >::iterator
            i = read_vect_float.begin();
          i != read_vect_float.end(); i++)
       Get(i->first, "", i->second);
-    for (std::map<string, std::vector<double> >::iterator
+    for (std::map<std::string, std::vector<double> >::iterator
            i = read_vect_double.begin();
          i != read_vect_double.end(); i++)
       Get(i->first, "", i->second);
-    for (std::map<string, std::vector<string> >::iterator
+    for (std::map<std::string, std::vector<std::string> >::iterator
            i = read_vect_string.begin();
          i != read_vect_string.end(); i++)
       Get(i->first, "", i->second);
@@ -566,14 +566,14 @@ namespace Ops
     \warning The entry may have any type supported by Ops, except a function.
     \note The prefix is not prepended to \a name.
   */
-  string Ops::LuaDefinition(string name)
+  std::string Ops::LuaDefinition(std::string name)
   {
     std::ostringstream output;
 
     // Below, the name is searched in all maps. When the name is found, its
-    // value is converted to a string (that Lua can process).
+    // value is converted to a std::string (that Lua can process).
 
-    std::map<string, bool>::iterator i_bool = read_bool.find(name);
+    std::map<std::string, bool>::iterator i_bool = read_bool.find(name);
     if (i_bool != read_bool.end())
       if (i_bool->second)
         output << name << " = true";
@@ -585,31 +585,31 @@ namespace Ops
     if (!output.str().empty())
       return output.str();
 
-    std::map<string, int>::iterator i_int = read_int.find(name);
+    std::map<std::string, int>::iterator i_int = read_int.find(name);
     if (i_int != read_int.end())
       output << name << " = " << i_int->second;
     if (!output.str().empty())
       return output.str();
 
-    std::map<string, float>::iterator i_float = read_float.find(name);
+    std::map<std::string, float>::iterator i_float = read_float.find(name);
     if (i_float != read_float.end())
       output << name << " = " << i_float->second;
     if (!output.str().empty())
       return output.str();
 
-    std::map<string, double>::iterator i_double = read_double.find(name);
+    std::map<std::string, double>::iterator i_double = read_double.find(name);
     if (i_double != read_double.end())
       output << name << " = " << i_double->second;
     if (!output.str().empty())
       return output.str();
 
-    std::map<string, string>::iterator i_string = read_string.find(name);
+    std::map<std::string, std::string>::iterator i_string = read_string.find(name);
     if (i_string != read_string.end())
       output << name << " = \"" << i_string->second << "\"";
     if (!output.str().empty())
       return output.str();
 
-    std::map<string, std::vector<bool> >::iterator i_vect_bool
+    std::map<std::string, std::vector<bool> >::iterator i_vect_bool
       = read_vect_bool.find(name);
     if (i_vect_bool != read_vect_bool.end())
       {
@@ -635,7 +635,7 @@ namespace Ops
     if (!output.str().empty())
       return output.str();
 
-    std::map<string, std::vector<int> >::iterator i_vect_int
+    std::map<std::string, std::vector<int> >::iterator i_vect_int
       = read_vect_int.find(name);
     if (i_vect_int != read_vect_int.end())
       {
@@ -653,7 +653,7 @@ namespace Ops
     if (!output.str().empty())
       return output.str();
 
-    std::map<string, std::vector<float> >::iterator i_vect_float
+    std::map<std::string, std::vector<float> >::iterator i_vect_float
       = read_vect_float.find(name);
     if (i_vect_float != read_vect_float.end())
       {
@@ -671,7 +671,7 @@ namespace Ops
     if (!output.str().empty())
       return output.str();
 
-    std::map<string, std::vector<double> >::iterator i_vect_double
+    std::map<std::string, std::vector<double> >::iterator i_vect_double
       = read_vect_double.find(name);
     if (i_vect_double != read_vect_double.end())
       {
@@ -689,7 +689,7 @@ namespace Ops
     if (!output.str().empty())
       return output.str();
 
-    std::map<string, std::vector<string> >::iterator i_vect_string
+    std::map<std::string, std::vector<std::string> >::iterator i_vect_string
       = read_vect_string.find(name);
     if (i_vect_string != read_vect_string.end())
       {
@@ -708,7 +708,7 @@ namespace Ops
       return output.str();
 
     if (output.str() == "")
-      throw Error("LuaDefinition(string)", "Entry \"" + name
+      throw Error("LuaDefinition(std::string)", "Entry \"" + name
                   + "\" was not read yet in file \"" + file_path_ + "\".");
 
     return output.str();
@@ -719,13 +719,13 @@ namespace Ops
   /*! The variables are returned in alphabetical order.
     \return The Lua definitions of all read variables.
   */
-  string Ops::LuaDefinition()
+  std::string Ops::LuaDefinition()
   {
-    std::vector<string> name_list = GetReadEntryList();
+    std::vector<std::string> name_list = GetReadEntryList();
 
-    string output;
-    std::vector<string>::iterator name;
-    string previous_name = "";
+    std::string output;
+    std::vector<std::string>::iterator name;
+    std::string previous_name = "";
     for (name = name_list.begin(); name != name_list.end(); name++)
       {
         // If '*name' is (or is part of) a new variable, inserts a new
@@ -738,10 +738,10 @@ namespace Ops
 
         // Checks whether a new table is introduced. In this case, it should
         // be declared first, with "name = {}".
-        if (name->find_first_of(".[") != string::npos)
+        if (name->find_first_of(".[") != std::string::npos)
           {
-            string::size_type i = 0;
-            string::size_type min_length
+            std::string::size_type i = 0;
+            std::string::size_type min_length
               = std::min(name->size(), previous_name.size());
             // Checks until where the previous name and the current name
             // coincide.
@@ -751,7 +751,7 @@ namespace Ops
                 && (previous_name[i] == '.' || previous_name[i] == '[')
                 && ((*name)[i] == '.' || (*name)[i] == '['))
               i++;
-            while ((i = name->find_first_of(".[", i)) != string::npos)
+            while ((i = name->find_first_of(".[", i)) != std::string::npos)
               output += name->substr(0, i++) + " = {}\n";
           }
 
@@ -771,7 +771,7 @@ namespace Ops
     \note The functions are omitted.
     \warning If the output file already exists, it is cleared.
   */
-  void Ops::WriteLuaDefinition(string file_name)
+  void Ops::WriteLuaDefinition(std::string file_name)
   {
     std::ofstream f(file_name.c_str());
     f << LuaDefinition();
@@ -800,7 +800,7 @@ namespace Ops
     is raised.
   */
   bool Ops::Convert(int index, std::vector<bool>::reference output,
-                    string name)
+                    std::string name)
   {
     if (!lua_isboolean(state_, index))
       if (name.empty())
@@ -825,7 +825,7 @@ namespace Ops
     states that it could not be converted. If \a name is empty, no exception
     is raised.
   */
-  bool Ops::Convert(int index, bool& output, string name)
+  bool Ops::Convert(int index, bool& output, std::string name)
   {
     if (!lua_isboolean(state_, index))
       if (name.empty())
@@ -850,7 +850,7 @@ namespace Ops
     states that it could not be converted. If \a name is empty, no exception
     is raised.
   */
-  bool Ops::Convert(int index, int& output, string name)
+  bool Ops::Convert(int index, int& output, std::string name)
   {
     if (!lua_isnumber(state_, index))
       if (name.empty())
@@ -884,7 +884,7 @@ namespace Ops
     states that it could not be converted. If \a name is empty, no exception
     is raised.
   */
-  bool Ops::Convert(int index, float& output, string name)
+  bool Ops::Convert(int index, float& output, std::string name)
   {
     if (!lua_isnumber(state_, index))
       if (name.empty())
@@ -909,7 +909,7 @@ namespace Ops
     states that it could not be converted. If \a name is empty, no exception
     is raised.
   */
-  bool Ops::Convert(int index, double& output, string name)
+  bool Ops::Convert(int index, double& output, std::string name)
   {
     if (!lua_isnumber(state_, index))
       if (name.empty())
@@ -923,7 +923,7 @@ namespace Ops
   }
 
 
-  //! Converts an element of the stack to a string.
+  //! Converts an element of the stack to a std::string.
   /*!
     \param[in] index index in the stack.
     \param[out] output converted value.
@@ -934,16 +934,16 @@ namespace Ops
     states that it could not be converted. If \a name is empty, no exception
     is raised.
   */
-  bool Ops::Convert(int index, string& output, string name)
+  bool Ops::Convert(int index, std::string& output, std::string name)
   {
     if (!lua_isstring(state_, index))
       if (name.empty())
         return false;
       else
-        throw Error("Convert(string&)",
-                    "The " + Entry(name) + " is not a string.");
+        throw Error("Convert(std::string&)",
+                    "The " + Entry(name) + " is not a std::string.");
 
-    output = static_cast<string>(lua_tostring(state_, index));
+    output = static_cast<std::string>(lua_tostring(state_, index));
     return true;
   }
 
@@ -953,7 +953,7 @@ namespace Ops
     \param[in] name name of the entry.
     \return The entry name with the prefix prepended.
   */
-  string Ops::Name(const string& name) const
+  std::string Ops::Name(const std::string& name) const
   {
     return prefix_ + name;
   }
@@ -962,10 +962,10 @@ namespace Ops
   //! Formats the description of an entry.
   /*!
     \param[in] name name of the entry.
-    \return A string with the entry name and the path to the configuration
+    \return A std::string with the entry name and the path to the configuration
     file, both quoted.
   */
-  string Ops::Entry(const string& name) const
+  std::string Ops::Entry(const std::string& name) const
   {
     return "entry \"" + Name(name) + "\" in \"" + file_path_ + "\"";
   }
@@ -974,10 +974,10 @@ namespace Ops
   //! Formats the description of a function.
   /*!
     \param[in] name name of the function.
-    \return A string with the function name and the path to the configuration
+    \return A std::string with the function name and the path to the configuration
     file, both quoted.
   */
-  string Ops::Function(const string& name) const
+  std::string Ops::Function(const std::string& name) const
   {
     return "function \"" + Name(name) + "\" in \"" + file_path_ + "\"";
   }
@@ -986,12 +986,12 @@ namespace Ops
   //! Formats the description of a constraint.
   /*!
     \param[in] constraint the constraint to be formatted.
-    \return A string with the constraint properly formatted.
+    \return A std::string with the constraint properly formatted.
   */
-  string Ops::Constraint(string constraint) const
+  std::string Ops::Constraint(std::string constraint) const
   {
     constraint = "      " + constraint;
-    if (constraint.find("ops_in", 0) != string::npos)
+    if (constraint.find("ops_in", 0) != std::string::npos)
       constraint += "\n      Note: 'ops_in(v, array)' checks whether 'v' is "
         "part of the list 'array'.";
     return constraint;
@@ -1007,7 +1007,7 @@ namespace Ops
     \param[in] name the name of an entry that is accessible from the entry
     currently on top of the stack.
   */
-  void Ops::WalkDown(string name)
+  void Ops::WalkDown(std::string name)
   {
     if (name.empty() || lua_isnil(state_, -1))
       return;
@@ -1015,7 +1015,7 @@ namespace Ops
     // The sub-entries are introduced with "." or "[i]".
     size_t end = name.find_first_of(".[");
 
-    if (end == string::npos)
+    if (end == std::string::npos)
       // No more sub-entry here.
       {
         lua_pushstring(state_, name.c_str());
@@ -1044,13 +1044,13 @@ namespace Ops
             }
           // First getting the index.
           size_t end_index = name.find_first_of("]");
-          if (end_index <= end + 1 || end_index == string::npos)
+          if (end_index <= end + 1 || end_index == std::string::npos)
             // Syntax error: "]" was not found or is misplaced.
             {
               lua_pushnil(state_);
               return;
             }
-          string index_str = name.substr(end + 1, end_index - end - 1);
+          std::string index_str = name.substr(end + 1, end_index - end - 1);
           // Checks whether 'index_str' is an integer.
           for (std::size_t i = 0; i < index_str.size(); i++)
             if (!isdigit(index_str[i]))
@@ -1064,7 +1064,7 @@ namespace Ops
           // Now getting the element of index 'index'.
           lua_rawgeti(state_, -1, index);
           // And preparing for the next step down.
-          string next_name = name.substr(end_index + 1).c_str();
+          std::string next_name = name.substr(end_index + 1).c_str();
           if (!next_name.empty() && next_name[0] == '.')
             // Removes the dot in the first place.
             next_name = next_name.substr(1);
@@ -1091,7 +1091,7 @@ namespace Ops
     \param[in] name the name of the entry.
     \param[in] value the value of the entry.
   */
-  void Ops::Push(string name, const bool& value)
+  void Ops::Push(std::string name, const bool& value)
   {
     read_bool[name] = value;
   }
@@ -1102,7 +1102,7 @@ namespace Ops
     \param[in] name the name of the entry.
     \param[in] value the value of the entry.
   */
-  void Ops::Push(string name, const int& value)
+  void Ops::Push(std::string name, const int& value)
   {
     read_int[name] = value;
   }
@@ -1113,7 +1113,7 @@ namespace Ops
     \param[in] name the name of the entry.
     \param[in] value the value of the entry.
   */
-  void Ops::Push(string name, const float& value)
+  void Ops::Push(std::string name, const float& value)
   {
     read_float[name] = value;
   }
@@ -1124,7 +1124,7 @@ namespace Ops
     \param[in] name the name of the entry.
     \param[in] value the value of the entry.
   */
-  void Ops::Push(string name, const double& value)
+  void Ops::Push(std::string name, const double& value)
   {
     read_double[name] = value;
   }
@@ -1135,7 +1135,7 @@ namespace Ops
     \param[in] name the name of the entry.
     \param[in] value the value of the entry.
   */
-  void Ops::Push(string name, const string& value)
+  void Ops::Push(std::string name, const std::string& value)
   {
     read_string[name] = value;
   }
@@ -1146,7 +1146,7 @@ namespace Ops
     \param[in] name the name of the entry.
     \param[in] value the value of the entry.
   */
-  void Ops::Push(string name, const std::vector<bool>& value)
+  void Ops::Push(std::string name, const std::vector<bool>& value)
   {
     read_vect_bool[name] = value;
   }
@@ -1157,7 +1157,7 @@ namespace Ops
     \param[in] name the name of the entry.
     \param[in] value the value of the entry.
   */
-  void Ops::Push(string name, const std::vector<int>& value)
+  void Ops::Push(std::string name, const std::vector<int>& value)
   {
     read_vect_int[name] = value;
   }
@@ -1168,7 +1168,7 @@ namespace Ops
     \param[in] name the name of the entry.
     \param[in] value the value of the entry.
   */
-  void Ops::Push(string name, const std::vector<float>& value)
+  void Ops::Push(std::string name, const std::vector<float>& value)
   {
     read_vect_float[name] = value;
   }
@@ -1179,7 +1179,7 @@ namespace Ops
     \param[in] name the name of the entry.
     \param[in] value the value of the entry.
   */
-  void Ops::Push(string name, const std::vector<double>& value)
+  void Ops::Push(std::string name, const std::vector<double>& value)
   {
     read_vect_double[name] = value;
   }
@@ -1190,14 +1190,11 @@ namespace Ops
     \param[in] name the name of the entry.
     \param[in] value the value of the entry.
   */
-  void Ops::Push(string name, const std::vector<string>& value)
+  void Ops::Push(std::string name, const std::vector<std::string>& value)
   {
     read_vect_string[name] = value;
   }
-
-
 }
-
 
 #define OPS_FILE_CLASSOPS_CXX
 #endif

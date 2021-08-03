@@ -18,6 +18,9 @@
 
 #ifndef OPS_FILE_CLASSOPS_HXX
 
+#include <map>
+#include <string>
+#include <vector>
 
 namespace Ops
 {
@@ -26,147 +29,148 @@ namespace Ops
   {
   protected:
     //! Path to the configuration file.
-    string file_path_;
+    std::string file_path_;
     //! Lua state.
     lua_State* state_;
     //! Prefix to be prepended to the entries names.
-    string prefix_;
+    std::string prefix_;
 
     //! Names and values of all Booleans read in the file.
-    std::map<string, bool> read_bool;
+    std::map<std::string, bool> read_bool;
     //! Names and values of all integer read in the file.
-    std::map<string, int> read_int;
+    std::map<std::string, int> read_int;
     //! Names and values of all floats read in the file.
-    std::map<string, float> read_float;
+    std::map<std::string, float> read_float;
     //! Names and values of all doubles read in the file.
-    std::map<string, double> read_double;
+    std::map<std::string, double> read_double;
     //! Names and values of all strings read in the file.
-    std::map<string, string> read_string;
+    std::map<std::string, std::string> read_string;
     //! Names and values of all vectors of Booleans read in the file.
-    std::map<string, std::vector<bool> > read_vect_bool;
+    std::map<std::string, std::vector<bool> > read_vect_bool;
     //! Names and values of all vectors of integers read in the file.
-    std::map<string, std::vector<int> > read_vect_int;
+    std::map<std::string, std::vector<int> > read_vect_int;
     //! Names and values of all vectors of floats read in the file.
-    std::map<string, std::vector<float> > read_vect_float;
+    std::map<std::string, std::vector<float> > read_vect_float;
     //! Names and values of all vectors of doubles read in the file.
-    std::map<string, std::vector<double> > read_vect_double;
+    std::map<std::string, std::vector<double> > read_vect_double;
     //! Names and values of all vectors of strings read in the file.
-    std::map<string, std::vector<string> > read_vect_string;
+    std::map<std::string, std::vector<std::string> > read_vect_string;
 
   public:
     // Constructor and destructor.
     Ops();
-    Ops(string file_path);
+    explicit Ops(std::string file_path);
     ~Ops();
 
     // Main methods.
-    void Open(string file_path, bool close_state = true);
+    void Open(std::string file_path, bool close_state = true);
     void Reload(bool close_state = true);
     void Close();
     template<class TD, class T>
     void
-    Set(string name, string constraint, const TD& default_value, T& value);
+    Set(std::string name, std::string constraint, const TD& default_value, T& value);
     template<class T>
-    void Set(string name, string constraint, T& value);
+    void Set(std::string name, std::string constraint, T& value);
     template<class T>
-    void Set(string name, T& value);
+    void Set(std::string name, T& value);
     template<class T>
-    T Get(string name);
+    T Get(std::string name);
     template<class T>
-    T Get(string name, string constraint);
+    T Get(std::string name, std::string constraint);
     template<class T>
-    T Get(string name, string constraint, const T& default_value);
+    T Get(std::string name, std::string constraint, const T& default_value);
     template<class Tin, class Tout>
-    void Apply(string name, const std::vector<Tin>& in,
+    void Apply(std::string name, const std::vector<Tin>& in,
                std::vector<Tout>& OUTPUT);
     template<class T>
-    T Apply(string name, const T& arg0);
+    T Apply(std::string name, const T& arg0);
     template<class T>
-    T Apply(string name, const T& arg0, const T& arg1);
+    T Apply(std::string name, const T& arg0, const T& arg1);
     template<class T>
-    T Apply(string name, const T& arg0, const T& arg1, const T& arg2);
+    T Apply(std::string name, const T& arg0, const T& arg1, const T& arg2);
     template<class T>
-    T Apply(string name, const T& arg0, const T& arg1, const T& arg2,
+    T Apply(std::string name, const T& arg0, const T& arg1, const T& arg2,
             const T& arg3);
     template<class T>
-    T Apply(string name, const T& arg0, const T& arg1, const T& arg2,
+    T Apply(std::string name, const T& arg0, const T& arg1, const T& arg2,
             const T& arg3, const T& arg4);
-    std::vector<string> GetEntryList(string name = "");
-    bool CheckConstraint(string name, string constraint);
-    bool CheckConstraintOnValue(string value, string constraint);
-    void PutOnStack(string name);
-    bool Exists(string name);
+    std::vector<std::string> GetEntryList(std::string name = "");
+    bool CheckConstraint(std::string name, std::string constraint);
+    bool CheckConstraintOnValue(std::string value, std::string constraint);
+    void PutOnStack(std::string name);
+    bool Exists(std::string name);
     void PushOnStack(bool value);
     void PushOnStack(int value);
     void PushOnStack(float value);
     void PushOnStack(double value);
-    void PushOnStack(string value);
+    void PushOnStack(std::string value);
     template<class T>
     void PushOnStack(const std::vector<T>& v);
     template<class T>
-    bool Is(string name);
-    bool IsTable(string name);
-    bool IsFunction(string name);
+    bool Is(std::string name);
+    bool IsTable(std::string name);
+    bool IsFunction(std::string name);
     void ClearStack();
 
-    void DoFile(string file_path);
-    void DoString(string expression);
+    void DoFile(std::string file_path);
+    void DoString(std::string expression);
 
     // Access methods.
-    string GetFilePath() const;
+    [[nodiscard]] std::string GetFilePath() const;
     lua_State* GetState();
 #ifndef SWIG
-    const lua_State* GetState() const;
+    [[nodiscard]] const lua_State* GetState() const;
 #endif
-    string GetPrefix() const;
-    void SetPrefix(string prefix);
+    [[nodiscard]] std::string GetPrefix() const;
+    void SetPrefix(std::string prefix);
     void ClearPrefix();
-    std::vector<string> GetReadEntryList();
+    std::vector<std::string> GetReadEntryList();
     void UpdateLuaDefinition();
-    string LuaDefinition(string name);
-    string LuaDefinition();
-    void WriteLuaDefinition(string file_name);
+    std::string LuaDefinition(std::string name);
+    std::string LuaDefinition();
+    void WriteLuaDefinition(std::string file_name);
 
   protected:
     bool Convert(int index, std::vector<bool>::reference output,
-                 string name = "");
-    bool Convert(int index, bool& output, string name = "");
-    bool Convert(int index, int& output, string name = "");
-    bool Convert(int index, float& output, string name = "");
-    bool Convert(int index, double& output, string name = "");
-    bool Convert(int index, string& output, string name = "");
+                 std::string name = "");
+    bool Convert(int index, bool& output, std::string name = "");
+    bool Convert(int index, int& output, std::string name = "");
+    bool Convert(int index, float& output, std::string name = "");
+    bool Convert(int index, double& output, std::string name = "");
+    bool Convert(int index, std::string& output, std::string name = "");
     template<class TD, class T>
-    void SetValue(string name, string constraint,
+    void SetValue(std::string name, std::string constraint,
                   const TD& default_value, bool with_default, T& value);
     template<class T>
-    void SetValue(string name, string constraint,
+    void SetValue(std::string name, std::string constraint,
                   const std::vector<T>& default_value, bool with_default,
                   std::vector<T>& value);
-    string Constraint(string constraint) const;
-    string Name(const string& name) const;
-    string Entry(const string& name) const;
-    string Function(const string& name) const;
-    void WalkDown(string name);
+    [[nodiscard]] std::string Constraint(std::string constraint) const;
+    [[nodiscard]] std::string Name(const std::string& name) const;
+    [[nodiscard]] std::string Entry(const std::string& name) const;
+    [[nodiscard]] std::string Function(const std::string& name) const;
+    void WalkDown(std::string name);
     template<class T>
-    bool IsParam(string name, T& value);
+    bool IsParam(std::string name, T& value);
     template<class T>
-    bool IsParam(string name, std::vector<T>& value);
-    void Push(string name, const bool& value);
-    void Push(string name, const int& value);
-    void Push(string name, const float& value);
-    void Push(string name, const double& value);
-    void Push(string name, const string& value);
-    void Push(string name, const std::vector<bool>& value);
-    void Push(string name, const std::vector<int>& value);
-    void Push(string name, const std::vector<float>& value);
-    void Push(string name, const std::vector<double>& value);
-    void Push(string name, const std::vector<string>& value);
+    bool IsParam(std::string name, std::vector<T>& value);
+    void Push(std::string name, const bool& value);
+    void Push(std::string name, const int& value);
+    void Push(std::string name, const float& value);
+    void Push(std::string name, const double& value);
+    void Push(std::string name, const std::string& value);
+    void Push(std::string name, const std::vector<bool>& value);
+    void Push(std::string name, const std::vector<int>& value);
+    void Push(std::string name, const std::vector<float>& value);
+    void Push(std::string name, const std::vector<double>& value);
+    void Push(std::string name, const std::vector<std::string>& value);
     template<class TK, class T>
     void AppendKey(const std::map<TK, T>& input, std::vector<TK>& vect);
   };
 
 }
 
+#include <ClassOps_impl.hxx>
 
 #define OPS_FILE_CLASSOPS_HXX
 #endif
