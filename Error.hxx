@@ -44,7 +44,7 @@ namespace Ops
 
 
 
-    [[nodiscard]] std::string What() const;
+    std::string What() const;
     void CoutWhat();
   };
 

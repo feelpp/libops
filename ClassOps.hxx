@@ -116,12 +116,12 @@ namespace Ops
     void DoString(std::string expression);
 
     // Access methods.
-    [[nodiscard]] std::string GetFilePath() const;
+    std::string GetFilePath() const;
     lua_State* GetState();
 #ifndef SWIG
-    [[nodiscard]] const lua_State* GetState() const;
+    const lua_State* GetState() const;
 #endif
-    [[nodiscard]] std::string GetPrefix() const;
+    std::string GetPrefix() const;
     void SetPrefix(std::string prefix);
     void ClearPrefix();
     std::vector<std::string> GetReadEntryList();
@@ -145,10 +145,10 @@ namespace Ops
     void SetValue(std::string name, std::string constraint,
                   const std::vector<T>& default_value, bool with_default,
                   std::vector<T>& value);
-    [[nodiscard]] std::string Constraint(std::string constraint) const;
-    [[nodiscard]] std::string Name(const std::string& name) const;
-    [[nodiscard]] std::string Entry(const std::string& name) const;
-    [[nodiscard]] std::string Function(const std::string& name) const;
+    std::string Constraint(std::string constraint) const;
+    std::string Name(const std::string& name) const;
+    std::string Entry(const std::string& name) const;
+    std::string Function(const std::string& name) const;
     void WalkDown(std::string name);
     template<class T>
     bool IsParam(std::string name, T& value);
