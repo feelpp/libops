@@ -575,10 +575,12 @@ namespace Ops
 
     std::map<std::string, bool>::iterator i_bool = read_bool.find(name);
     if (i_bool != read_bool.end())
+    {
       if (i_bool->second)
         output << name << " = true";
       else
         output << name << " = false";
+    }
     // In case the entry was read under two different types, only one type is
     // returned. So, once the entry is found, this method returns the
     // definition.
@@ -803,12 +805,13 @@ namespace Ops
                     std::string name)
   {
     if (!lua_isboolean(state_, index))
+    {
       if (name.empty())
         return false;
       else
         throw Error("Convert(vector<bool>::reference&)",
                     "The " + Entry(name) + " is not a Boolean.");
-
+    }
     output = static_cast<bool>(lua_toboolean(state_, index));
     return true;
   }
@@ -828,12 +831,13 @@ namespace Ops
   bool Ops::Convert(int index, bool& output, std::string name)
   {
     if (!lua_isboolean(state_, index))
+    {
       if (name.empty())
         return false;
       else
         throw Error("Convert(bool&)",
                     "The " + Entry(name) + " is not a Boolean.");
-
+    }
     output = static_cast<bool>(lua_toboolean(state_, index));
     return true;
   }
@@ -853,21 +857,23 @@ namespace Ops
   bool Ops::Convert(int index, int& output, std::string name)
   {
     if (!lua_isnumber(state_, index))
+    {
       if (name.empty())
         return false;
       else
         throw Error("Convert(int&)",
                     "The " + Entry(name) + " is not an integer.");
-
+    }
     double number = static_cast<double>(lua_tonumber(state_, index));
     int value = static_cast<int>(number);
     if (static_cast<double>(value) != number)
+    {
       if (name.empty())
         return false;
       else
         throw Error("Convert(int&)",
                     "The " + Entry(name) + " is not an integer.");
-
+    }
     output = value;
     return true;
   }
@@ -887,12 +893,13 @@ namespace Ops
   bool Ops::Convert(int index, float& output, std::string name)
   {
     if (!lua_isnumber(state_, index))
+    {
       if (name.empty())
         return false;
       else
         throw Error("Convert(float&)",
                     "The " + Entry(name) + " is not a float.");
-
+    }
     output = static_cast<float>(lua_tonumber(state_, index));
     return true;
   }
@@ -912,12 +919,13 @@ namespace Ops
   bool Ops::Convert(int index, double& output, std::string name)
   {
     if (!lua_isnumber(state_, index))
+    {
       if (name.empty())
         return false;
       else
         throw Error("Convert(double&)",
                     "The " + Entry(name) + " is not a double.");
-
+    }
     output = static_cast<double>(lua_tonumber(state_, index));
     return true;
   }
@@ -937,12 +945,13 @@ namespace Ops
   bool Ops::Convert(int index, std::string& output, std::string name)
   {
     if (!lua_isstring(state_, index))
+    {
       if (name.empty())
         return false;
       else
         throw Error("Convert(std::string&)",
                     "The " + Entry(name) + " is not a std::string.");
-
+    }
     output = static_cast<std::string>(lua_tostring(state_, index));
     return true;
   }
@@ -1033,6 +1042,7 @@ namespace Ops
       }
 
     if (name[end] == '[')
+    {
       if (end == 0)
         // Access to an element through "[i]".
         {
@@ -1083,6 +1093,7 @@ namespace Ops
             WalkDown(name.substr(end).c_str());
           return;
         }
+    }
   }
 
 

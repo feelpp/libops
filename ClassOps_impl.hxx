@@ -305,6 +305,7 @@ namespace Ops
     PutOnStack(Name(name));
 
     if (lua_isnil(state_, -1))
+    {
       if (with_default)
         {
           value = default_value;
@@ -314,7 +315,7 @@ namespace Ops
       else
         throw Error("SetValue",
                     "The " + Entry(name) + " was not found.");
-
+    }
     Convert(-1, value, name);
 
     if (!CheckConstraint(name, constraint))
@@ -346,6 +347,7 @@ namespace Ops
     PutOnStack(Name(name));
 
     if (lua_isnil(state_, -1))
+    {
       if (with_default)
         {
           value = default_value;
@@ -355,7 +357,7 @@ namespace Ops
       else
         throw Error("SetValue",
                     "The " + Entry(name) + " was not found.");
-
+    }
     if (!lua_istable(state_, -1))
       throw Error("SetValue",
                   "The " + Entry(name) + " is not a table.");
